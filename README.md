@@ -4,6 +4,10 @@
 
 This project is the frontend for the User Management Platform developed for TalentAlke. The aim is to build a user-friendly interface that allows users to interact with the system, facilitating registration, data entry, and information management. We will be using React and Vite to create a modern, fast, and efficient user interface.
 
+[User Management Design on Figma](https://www.figma.com/design/VvCFVh2dR3Am2IY9wNKoZS/User-Management?node-id=0-1&t=Af86guPittelMT3A-1)
+
+![Wireframe](./assets/wireframe.jpeg)
+
 ## Dependencies & Justifications 🛠️
 
 ### Mandatory Libraries
