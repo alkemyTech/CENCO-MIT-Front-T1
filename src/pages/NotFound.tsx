@@ -4,7 +4,7 @@ import ColorButton from "../components/ColorButton";
 function NotFound() {
   return (
     <Container>
-      <img width={200} src="../../assets/logo.png" alt="logo" />
+      <img width={200} src="../../assets/Logo.png" alt="logo" />
       <div
         style={{
           display: "flex",
