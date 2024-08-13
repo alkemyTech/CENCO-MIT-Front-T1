@@ -3,9 +3,10 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router-dom";
-import Login from "../pages/Login";
+
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
+import Login from "../pages/Login/Login";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

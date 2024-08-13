@@ -1,0 +1,52 @@
+body {
+    margin: 0;
+}
+
+/* grid container for both columns */
+.container{
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+
+/* login form column */
+.loginForm {
+    display: grid; 
+    height: 100vh;
+}
+
+/* image login column */
+.imgLogin{
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+}
+
+/* logo */
+.logo{
+    margin: 42px 0 0 42px; 
+    padding-top: 0;
+}
+
+/* text align center */
+.textCenter{
+    text-align: center;
+}
+
+.formContainer{
+    margin: 32px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.titulo{
+    font-size: 24px;
+    margin-bottom: 32px;
+}
+
+.subtitulo{
+    font-size: 16px;
+    margin-bottom: 34px;
+}
