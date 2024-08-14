@@ -29,7 +29,6 @@ export default function ActionButton({ userID }: Readonly<ActionButtonProps>) {
         onClick={handleClick}
         sx={{ color: "var(--text-color)", cursor: "pointer" }}
       />
-      <h1>{userID}</h1>
 
       <Popover
         open={open}
