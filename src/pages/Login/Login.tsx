@@ -1,13 +1,26 @@
 import Grid from '@mui/material/Grid';
 import imgLogin from '../../../assets/imgLogin.jfif';
-import { Box, Button, CardMedia, TextField } from '@mui/material';
+import { Box, Button, CardMedia, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
 import './style.css';
 import logo from '../../../assets/Logo.png'
+import React, { useState } from 'react';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 function Login() {
+  // for password funcionality
+  const [showPassword, setShowPassword] = useState(false)
+
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
   return (
+
     <Grid container className='container'>
-      <Grid item sm={7} md={8} lg={8}>
+      <Grid item md={8} lg={8}>
         <CardMedia
           component="img"
           className='imgLogin'
@@ -15,16 +28,16 @@ function Login() {
           alt="Welcome"
         />
       </Grid>
-      <Grid item sm={4} md={4} lg={4} className='loginForm'>
-          <img src={logo} alt="Logo" className="logo" />
+      <Grid item md={4} lg={4} className='loginForm' >
+        <img src={logo} alt="Logo" className="logo" />
         <div className='formContainer'>
-          <span className='textCenter titulo'>Hola, bienvenido a AlkeTalent</span>
-          <span className='textCenter subtitulo'>Ingrese sus datos para iniciar sesión en su cuenta</span>
+          <span className='textCenter title'>Hola, bienvenido a AlkeTalent</span>
+          <span className='textCenter subtitle'>Ingrese sus datos para iniciar sesión en su cuenta</span>
           <Box
             component="form"
             sx={{
-              '& .MuiTextField-root': { my: 2 },
-              '& .MuiButton-root': { my: 2 }
+              '& .MuiTextField-root': { my: 4 },
+              '& .MuiButton-root': { my: 4 }
             }}
             noValidate
             autoComplete="off"
@@ -36,22 +49,34 @@ function Login() {
                 id="outlined-required"
                 label="Nombre de usuario"
               />
-              <TextField
-                required
-                fullWidth
-                id="outlined-required"
-                label="Contraseña"
-              />
+              <FormControl variant="outlined" required
+                fullWidth>
+                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <OutlinedInput
+
+                  id="outlined-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
               <Button fullWidth variant="contained">Acceder</Button>
 
             </div>
-
           </Box>
         </div>
       </Grid>
-
-
-
     </Grid>
   );
 }
