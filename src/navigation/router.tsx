@@ -6,6 +6,7 @@ import {
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
+import Register from "../pages/FormRegister"; // Import the Register component
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -13,6 +14,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/*" element={<NotFound />} />
+      <Route path="/register" element={<Register />} /> // Add a new route for the Register component
     </>
   )
 );
