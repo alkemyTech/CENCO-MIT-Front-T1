@@ -5,6 +5,6 @@ interface CustomAlertProps {
   text: string;
 }
 
-function CustomAlertProps({ severity, text }: Readonly<CustomAlertProps>) {
+export function CustomAlert({ severity, text }: Readonly<CustomAlertProps>) {
   return <Alert severity={severity}>{text}</Alert>;
 }

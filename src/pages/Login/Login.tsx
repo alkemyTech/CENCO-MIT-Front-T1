@@ -1,15 +1,26 @@
 import Grid from '@mui/material/Grid';
 import imgLogin from '../../../assets/imgLogin.jfif';
-import { Box, Button, CardMedia, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
+import { AlertColor, Box, Button, CardMedia, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
 import './style.css';
 import logo from '../../../assets/Logo.png'
 import React, { useState } from 'react';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../redux/features/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
+import ColorButton from '../../components/ColorButton';
+import { CustomAlert } from '../../components/CustomAlert';
 
 function Login() {
   // for password funcionality
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showAlert, setShowAlert] = useState(false);
+  const [severity, setSeverity] = useState<AlertColor>("error");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -17,6 +28,22 @@ function Login() {
     event.preventDefault();
   };
 
+  const handleSubmit = async () => {
+    try {
+      const actionResult = await dispatch(loginUser({ email, password }));
+      setShowAlert(true);
+      if (loginUser.fulfilled.match(actionResult)) {
+        setSeverity('success');
+        setTimeout(() => {
+          navigate('/dashboard'); 
+        }, 1000); // Tiempo en milisegundos     
+      } else {
+        setSeverity('error');
+      }
+    } catch (error) {
+      console.error('An error occurred during login:', error);
+    }
+  }
   return (
 
     <Grid container className='container'>
@@ -29,6 +56,7 @@ function Login() {
         />
       </Grid>
       <Grid item md={4} lg={4} className='loginForm' >
+
         <img src={logo} alt="Logo" className="logo" />
         <div className='formContainer'>
           <span className='textCenter title'>Hola, bienvenido a AlkeTalent</span>
@@ -48,12 +76,15 @@ function Login() {
                 fullWidth
                 id="outlined-required"
                 label="Nombre de usuario"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <FormControl variant="outlined" required
                 fullWidth>
                 <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                 <OutlinedInput
-
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   id="outlined-adornment-password"
                   type={showPassword ? 'text' : 'password'}
                   endAdornment={
@@ -71,7 +102,13 @@ function Login() {
                   label="Password"
                 />
               </FormControl>
-              <Button fullWidth variant="contained">Acceder</Button>
+              <ColorButton variant='contained' onClick={handleSubmit}>Acceder</ColorButton>
+              {
+                showAlert && <CustomAlert
+                  severity={severity}
+                  text={severity === "success" ? "Login successful" : "Invalid credentials, try again"}
+                />
+              }
 
             </div>
           </Box>
