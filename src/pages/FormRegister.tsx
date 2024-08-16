@@ -1,36 +1,13 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Form } from 'react-router-dom';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { FormControl, FormLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useState } from 'react';
-import AdapterDateFns from '@mui/x-date-pickers';
-import LocalizationProvider from '@mui/x-date-pickers';
-import { DatePicker } from '@mui/x-date-pickers';
-import axios from 'axios';
 import { Grid } from '@mui/material';
-
-
-
-const style = {
-    position: 'absolute',
-    top: '50%', // Centrar verticalmente
-    left: '50%', // Centrar horizontalmente
-    transform: 'translate(-50%, -50%)', // Ajustar el centro exacto del modal
-    width: '599px', // Ancho fijo
-    height: '735px', // Alto fijo
-    bgcolor: 'background.paper',
-    border: '2px solid transparent',
-    boxShadow: 24,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '15px',
-    borderRadius: '30px'
-  };
+import ColorButton from '../components/ColorButton';
+import ColorBox from '../components/Box';
+import { signup } from '../api/api';
   
 
   const Register = () => {
@@ -56,44 +33,33 @@ const style = {
       };
 
     
-    const handleSubmit = async (e: React.FormEvent) => {
+      const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-          const response = await axios.post('http://localhost:3000/user/signup', formData);
-          // Asumiendo que el backend responde con un mensaje en caso de éxito
-          postMessage(response.data.message);
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            // Manejar errores específicos de la respuesta del backend
-            postMessage(error.response?.data.message || 'An error occurred');
-          } else {
-            // Manejar otros errores
-            postMessage('An error occurred');
-          }
-        }
+        const result = await signup(formData);
+        postMessage(result.message); // Assuming postMessage is a function to display messages to the user
       };
   
       return (
         <div>
-          <Button onClick={handleOpen}>Agregar usuario</Button>
+          <Button onClick={handleOpen} >Agregar usuario</Button>
           <Modal
             open={open}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Register
+            <ColorBox sx={{ bgcolor: 'white', padding: '20px' }}>
+              <Typography id="modal-modal-title" variant="h6" component="h2"  sx={{ fontWeight: 'bold' }}>
+                Agregar usuario
               </Typography>
               <form onSubmit={handleSubmit}>
-                
+                 <FormLabel htmlFor="fullName"sx={{ fontWeight: 'bold' }}>Nombre Completo</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       id="fullName"
-                      label="Full Name"
+                      label="Ejemplo: Juan Pérez"
                       name="fullName"
                       autoComplete="name"
                       autoFocus
@@ -101,40 +67,42 @@ const style = {
                       onChange={handleChange}
                     />
                   
-                 
+                    <FormLabel htmlFor="email"sx={{ fontWeight: 'bold' }}>Correo Electrónico</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       id="email"
-                      label="Email Address"
+                      label="Ejemplo: Juan@gmail.com"
                       name="email"
                       autoComplete="email"
                       value={formData.email}
                       onChange={handleChange}
                     />
                   
-                  
+                    <FormLabel htmlFor="rut"sx={{ fontWeight: 'bold' }}>Rut</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       id="rut"
-                      label="RUT"
+                      label="Ejemplo: 12345678-9"
                       name="rut"
                       autoComplete="rut"
                       value={formData.rut}
                       onChange={handleChange}
                     />
-                  
+
+                   
                   <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
+                  <FormLabel htmlFor="phone"sx={{ fontWeight: 'bold' }}>Telefono</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       id="phone"
-                      label="Phone Number"
+                      label="Ejemplo: +56912345XXX"
                       name="phone"
                       autoComplete="phone"
                       value={formData.phone}
@@ -142,12 +110,13 @@ const style = {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
+                  <FormLabel htmlFor="country"sx={{ fontWeight: 'bold' }}>País</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       id="country"
-                      label="Country"
+                      label="Ejemplo: Chile"
                       name="country"
                       autoComplete="country"
                       value={formData.country}
@@ -155,12 +124,13 @@ const style = {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
+                    <FormLabel htmlFor="birthday"sx={{ fontWeight: 'bold' }}>Fecha de Nacimiento</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       id="birthday"
-                      label="Birthday"
+                      label="Ejemplo: 01/01/2000"
                       name="birthday"
                       autoComplete="birthday"
                       value={formData.birthday}
@@ -168,7 +138,8 @@ const style = {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth margin="normal">
+                  <FormLabel htmlFor="role"sx={{ fontWeight: 'bold' }}>Rol</FormLabel>
+                    <FormControl fullWidth margin="dense">
                       <InputLabel id="role-label">Role</InputLabel>
                       <Select
                         labelId="role-label"
@@ -185,37 +156,42 @@ const style = {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
+                    <FormLabel htmlFor="Password"sx={{ fontWeight: 'bold' }} >Contraseña</FormLabel>
                     <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       name="password"
-                      label="Password"
+                      label="*******"
                       type="password"
                       id="password"
                       autoComplete="current-password"
                       value={formData.password}
                       onChange={handleChange}
+                      
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
+                    <FormLabel htmlFor="confirmPassword"sx={{ fontWeight: 'bold' }}>Confirmar Contraseña</FormLabel>
                   <TextField
-                      margin="normal"
+                      margin="dense"
                       required
                       fullWidth
                       name="confirmPassword"
-                      label="Confirm Password"
+                      label="*******"
                       type="password"
                       id="confirmPassword"
                       autoComplete="current-password"
                      />
                     </Grid>
                 </Grid>
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, backgroundColor: '#09BEFB' }}>
-                  Registro
-                </Button>
+
+                <ColorButton type="submit" fullWidth variant="contained"  sx={{mt: 3, mb:2 }}>
+                    Registrar
+                </ColorButton>
+
               </form>
-            </Box>
+            </ColorBox>
           </Modal>
         </div>
       );
