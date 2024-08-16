@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid';
 import imgLogin from '../../../assets/imgLogin.jfif';
 import { AlertColor, Box, Button, CardMedia, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
-import './style.css';
+import styles from './login.module.css';
 import logo from '../../../assets/Logo.png'
 import React, { useState } from 'react';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -46,21 +46,21 @@ function Login() {
   }
   return (
 
-    <Grid container className='container'>
+    <Grid container className={styles.container}>
       <Grid item md={8} lg={8}>
         <CardMedia
           component="img"
-          className='imgLogin'
+          className={styles.imgLogin}
           image={imgLogin}
           alt="Welcome"
         />
       </Grid>
-      <Grid item md={4} lg={4} className='loginForm' >
+      <Grid item md={4} lg={4} className={styles.loginForm}>
 
-        <img src={logo} alt="Logo" className="logo" />
-        <div className='formContainer'>
-          <span className='textCenter title'>Hola, bienvenido a AlkeTalent</span>
-          <span className='textCenter subtitle'>Ingrese sus datos para iniciar sesión en su cuenta</span>
+        <img src={logo} alt="Logo" className={styles.logo} />
+        <div className={styles.formContainer}>
+          <span className={`${styles.textCenter} ${styles.title}`} >Hola, bienvenido a AlkeTalent</span>
+          <span className={`${styles.textCenter} ${styles.subtitle}`}>Ingrese sus datos para iniciar sesión en su cuenta</span>
           <Box
             component="form"
             sx={{
@@ -70,12 +70,12 @@ function Login() {
             noValidate
             autoComplete="off"
           >
-            <div className='inputsContainer'>
+            <div className={styles.inputsContainer}>
               <TextField
                 required
                 fullWidth
                 id="outlined-required"
-                label="Nombre de usuario"
+                label="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
