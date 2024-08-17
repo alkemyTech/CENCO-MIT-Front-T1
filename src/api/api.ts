@@ -2,6 +2,9 @@ import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 export const getToken = (): string | null => sessionStorage.getItem('token');
@@ -49,9 +52,13 @@ export const signup = async (userData: {
   birthday: string;
   role: string;
   password: string;
-}): Promise<any> => {
+}, token: string): Promise<any> => {
   try {
-    const response = await apiClient.post('/signup', userData);
+    const response = await apiClient.post('/user/signup', userData, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;

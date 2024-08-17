@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux'; // Import useSelector
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
@@ -8,6 +9,7 @@ import { Grid } from '@mui/material';
 import ColorButton from '../components/ColorButton';
 import ColorBox from '../components/Box';
 import { signup } from '../api/api';
+import { AuthState } from '../redux/features/slices/authSlice';
   
 
   const Register = () => {
@@ -22,21 +24,24 @@ import { signup } from '../api/api';
         role: '',
       password: '',
     });
+
+    const token = sessionStorage.getItem('token')
   
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-  
- 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
       };
 
-    
       const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const result = await signup(formData);
-        postMessage(result.message); // Assuming postMessage is a function to display messages to the user
+        if (token) { // Check if token exists
+          const result = await signup(formData, token); // Pass the token to signup
+          postMessage(result.message); // Assuming postMessage is a function to display messages to the user
+        } else {
+          console.log("No user is currently logged in."); // Handle case where no user is logged in
+        }
       };
   
       return (
@@ -186,7 +191,7 @@ import { signup } from '../api/api';
                     </Grid>
                 </Grid>
 
-                <ColorButton type="submit" fullWidth variant="contained"  sx={{mt: 3, mb:2 }}>
+                <ColorButton type="submit" fullWidth variant="contained" sx={{mt: 3, mb:2 }}>
                     Registrar
                 </ColorButton>
 

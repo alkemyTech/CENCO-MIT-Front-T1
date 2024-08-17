@@ -34,3 +34,8 @@ This project is the frontend for the User Management Platform developed for Tale
   - Use PascalCase for React components and directories.
   - Use camelCase for functions and variables.
   - Use SCREAMING_SNAKE_CASE for constants.
+
+## .env File
+```
+VITE_BACKEND_URL = http://localhost:3000
+```
