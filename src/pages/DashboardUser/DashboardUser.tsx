@@ -5,7 +5,6 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Profile from '../Profile/Profile';
 
-
 const DashboardUser = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -13,7 +12,6 @@ const DashboardUser = () => {
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
-
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', minHeight: '100vh', backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
@@ -27,7 +25,7 @@ const DashboardUser = () => {
           boxSizing: 'border-box',
         }}
       >
-        <Sidebar open={drawerOpen} onDrawerToggle={handleDrawerToggle}  />
+        <Sidebar open={drawerOpen} onDrawerToggle={handleDrawerToggle} />
         <Box
           sx={{
             display: 'flex',
@@ -38,19 +36,31 @@ const DashboardUser = () => {
             width: '100%',
           }}
         >
-          <Header onDrawerToggle={handleDrawerToggle}/>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: { sm: '1200px', xs: '100%' }, 
+              mx: 'auto',
+            }}
+          >
+            <Header onDrawerToggle={handleDrawerToggle} />
+          </Box>
+
           <Box
             component="main"
             sx={{
               flexGrow: 1,
-              padding: { xs: 2, sm: 3 },
               width: '100%',
+              maxWidth: { sm: '1200px', xs: '100%' }, // Asegurar que el ancho sea consistente con el header
+              padding: { xs: 2, sm: 3 },
+              mx: 'auto',
               boxSizing: 'border-box',
               overflowX: 'hidden',
             }}
           >
             <Profile />
           </Box>
+          
           <Footer />
         </Box>
       </Box>
