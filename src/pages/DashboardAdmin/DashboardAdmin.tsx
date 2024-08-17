@@ -19,7 +19,6 @@ const DashboardAdmin = () => {
 
 
   useEffect(() => {
-    console.log('Fetching users in DashboardAdmin');
     dispatch(fetchUsers());
   }, [dispatch]);
 
