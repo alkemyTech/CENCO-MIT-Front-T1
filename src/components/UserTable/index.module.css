@@ -1,0 +1,44 @@
+.roleAdmin,
+.roleUser {
+  border-radius: 16px;
+  padding: 4px 8px;
+  text-align: center;
+  font-size: 14px;
+  color: #3e8e68;
+  background-color: rgba(62, 142, 104, 0.08);
+  border: 1px solid #3e8e68;
+  display: inline-block;
+  width: 100px;
+}
+
+.roleUser {
+  color: #11427c;
+  background-color: rgba(17, 66, 124, 0.08);
+  border: 1px solid #11427c;
+}
+
+.inactiveUser {
+  background-color: #f0f0f063;
+  color: #a0a0a0;
+}
+
+.inactiveStatus {
+  color: #a0a0a0;
+}
+
+.inactiveUser .roleAdmin,
+.inactiveUser .roleUser {
+  color: #a0a0a0 !important;
+  background-color: #f0f0f0 !important;
+  border-color: #a0a0a0 !important;
+  font-size: 14px;
+  width: 100px;
+}
+
+.tableRow:first-child {
+  border-top: 1px solid rgba(224, 224, 224, 1);
+}
+
+.tableRow:last-child td {
+  border-bottom: none !important;
+}
