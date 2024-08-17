@@ -1,61 +1,112 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import jwtDecode from "jwt-decode";  
 import apiClient from "../../../api/api";
+import { User, Role } from "../../../interfaces/User";
+import { fetchProfile } from "../../../api/userServices"; 
 
 export interface AuthState {
-    isAuthenticated: boolean;
-    username: string | null;
-    token: string | null;
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
+  isAuthenticated: boolean;
+  user: User | null;  
+  token: string | null;
+  role: Role | null;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';  
+  error: string | null;
 }
 
 const initialState: AuthState = {
-    isAuthenticated: false,
-    username: null,
-    token: null,
-    status: 'idle',
-    error: null,
-}
+  isAuthenticated: sessionStorage.getItem('token') !== null,
+  user: null, 
+  token: sessionStorage.getItem('token'),
+  role: sessionStorage.getItem('role') as Role | null,
+  status: 'idle',  
+  error: null,
+};
 
-export const loginUser: any = createAsyncThunk(
-    'auth/loginUser',
-    async ({ email, password }: { email: string; password: string }) => {
-        const response = await apiClient.post('/user/login', { email, password });
-        return response.data; // Asume que la respuesta contiene { token, username }
-        // console.log(email)
+export const loginUser = createAsyncThunk<
+  { token: string; role: Role },
+  { email: string; password: string },
+  { rejectValue: string }
+>(
+  'auth/loginUser',
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const response = await apiClient.post<{ data: string; message: string }>('/user/login', { email, password });
+      
+      if (response.data.data) {
+        const decodedToken = jwtDecode<{ role: Role }>(response.data.data);
+        return { token: response.data.data, role: decodedToken.role };
+      } else {
+        return thunkAPI.rejectWithValue('Login failed: No token provided');
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Login failed: Unable to login');
     }
+  }
 );
 
-export const authSlice: any = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-        logout: (state) => {
-            state.isAuthenticated = false;
-            state.username = null;
-            state.token = null;
-        }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(loginUser.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(loginUser.fulfilled, (state, action: PayloadAction<{ token: string; username: string }>) => {
-                state.isAuthenticated = true;
-                state.username = action.payload.username;
-                state.token = action.payload.token;
-                state.status = 'succeeded';
-                state.error = null;
-            })
-            .addCase(loginUser.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message || 'Login failed';
-            });
-    },
-})
+export const fetchUserProfile = createAsyncThunk<
+  User,
+  void,
+  { rejectValue: string }
+>(
+  'auth/fetchUserProfile',
+  async (_, thunkAPI) => {
+    try {
+      const user = await fetchProfile();
+      return user;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to fetch user profile');
+    }
+  }
+);
 
-export const { login, logout } = authSlice.actions;
+export const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    logout: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.token = null;
+      state.role = null;
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('role');
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.fulfilled, (state, action: PayloadAction<{ token: string; role: Role }>) => {
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+        state.role = action.payload.role;
 
-export default authSlice.reducer
+        sessionStorage.setItem('token', action.payload.token);
+        sessionStorage.setItem('role', action.payload.role);
+
+        state.status = 'succeeded';  
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action: PayloadAction<User>) => {
+        state.user = action.payload; 
+        state.status = 'succeeded';  
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = 'failed';  
+        state.error = action.payload || 'Login failed';
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.status = 'failed';  
+        state.error = action.payload || 'Failed to fetch user profile';
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.status = 'loading';  
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.status = 'loading';  
+      });
+  },
+});
+
+export const { logout } = authSlice.actions;
+
+export default authSlice.reducer;
