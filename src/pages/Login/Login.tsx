@@ -1,26 +1,26 @@
-import Grid from '@mui/material/Grid';
-import imgLogin from '../../../assets/imgLogin.jfif';
-import { AlertColor, Box, Button, CardMedia, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
-import styles from './login.module.css';
-import logo from '../../../assets/Logo.png'
 import React, { useState } from 'react';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../../redux/features/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { Grid, CardMedia, Box, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, TextField, AlertColor } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { AppDispatch } from '../../redux/store';
+import { loginUser, fetchUserProfile } from '../../redux/features/slices/authSlice';
+import styles from './login.module.css';
 import ColorButton from '../../components/ColorButton';
 import { CustomAlert } from '../../components/CustomAlert';
+import imgLogin from '../../assets/img/imgLogin.jfif';
+import logo from '../../assets/img/Logo.png';
+import { Role } from '../../interfaces/User';
 
 function Login() {
-  // for password funcionality
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [severity, setSeverity] = useState<AlertColor>("error");
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate(); 
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -32,20 +32,25 @@ function Login() {
     try {
       const actionResult = await dispatch(loginUser({ email, password }));
       setShowAlert(true);
+  
       if (loginUser.fulfilled.match(actionResult)) {
         setSeverity('success');
+        const role = actionResult.payload.role;
+  
+        await dispatch(fetchUserProfile());
+  
         setTimeout(() => {
-          navigate('/dashboard'); 
-        }, 1000); // Tiempo en milisegundos     
+          navigate(role === Role.ADMIN ? '/dashboard/all-users' : '/dashboard/profile'); 
+        }, 1000); 
       } else {
         setSeverity('error');
       }
     } catch (error) {
-      console.error('An error occurred during login:', error);
+      setSeverity('error');
     }
-  }
-  return (
+  };
 
+  return (
     <Grid container className={styles.container}>
       <Grid item md={8} lg={8}>
         <CardMedia
@@ -56,7 +61,6 @@ function Login() {
         />
       </Grid>
       <Grid item md={4} lg={4} className={styles.loginForm}>
-
         <img src={logo} alt="Logo" className={styles.logo} />
         <div className={styles.formContainer}>
           <span className={`${styles.textCenter} ${styles.title}`} >Hola, bienvenido a AlkeTalent</span>
@@ -79,8 +83,7 @@ function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <FormControl variant="outlined" required
-                fullWidth>
+              <FormControl variant="outlined" required fullWidth>
                 <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                 <OutlinedInput
                   value={password}
@@ -109,7 +112,6 @@ function Login() {
                   text={severity === "success" ? "Login successful" : "Invalid credentials, try again"}
                 />
               }
-
             </div>
           </Box>
         </div>

@@ -37,32 +37,11 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       setAuthToken(null);
-      window.location.href = '/login';
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }
 );
 
-export const signup = async (userData: {
-  fullName: string;
-  rut: string;
-  email: string;
-  phone: string;
-  country: string;
-  birthday: string;
-  role: string;
-  password: string;
-}, token: string): Promise<any> => {
-  try {
-    const response = await apiClient.post('/user/signup', userData, {
-      headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
 
 export default apiClient;

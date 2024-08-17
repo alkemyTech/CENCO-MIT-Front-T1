@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux'; // Import useSelector
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { FormControl, FormLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
@@ -8,199 +6,218 @@ import { useState } from 'react';
 import { Grid } from '@mui/material';
 import ColorButton from '../components/ColorButton';
 import ColorBox from '../components/Box';
-import { signup } from '../api/api';
-import { AuthState } from '../redux/features/slices/authSlice';
+import { signup } from '../api/userServices';
+import { isRutValid } from '../validations/rutValidation';
+import { isPhoneValid } from '../validations/phoneValidation';
+import { isPasswordValid } from '../validations/passwordValidation';
+import { isEmailValidAndAvailable } from '../validations';
+
+const Register = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    rut: '',
+    email: '',
+    phone: '',
+    country: '',
+    birthday: new Date(),
+    role: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState({
+    rut: false,
+    phone: false,
+    password: false,
+    confirmPassword: false,
+    email: '',
+  });
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   
-
-  const Register = () => {
-    const [open, setOpen] = useState(false);
-    const [formData, setFormData] = useState({
-      fullName: '',
-      rut: '',
-      email: '',
-      phone: '',
-      country: '',
-      birthday: '',
-        role: '',
-      password: '',
-    });
-
-    const token = sessionStorage.getItem('token')
-  
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
-
-      const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (token) { // Check if token exists
-          const result = await signup(formData, token); // Pass the token to signup
-          postMessage(result.message); // Assuming postMessage is a function to display messages to the user
-        } else {
-          console.log("No user is currently logged in."); // Handle case where no user is logged in
-        }
-      };
-  
-      return (
-        <div>
-          <Button onClick={handleOpen} >Agregar usuario</Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <ColorBox sx={{ bgcolor: 'white', padding: '20px' }}>
-              <Typography id="modal-modal-title" variant="h6" component="h2"  sx={{ fontWeight: 'bold' }}>
-                Agregar usuario
-              </Typography>
-              <form onSubmit={handleSubmit}>
-                 <FormLabel htmlFor="fullName"sx={{ fontWeight: 'bold' }}>Nombre Completo</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      id="fullName"
-                      label="Ejemplo: Juan Pérez"
-                      name="fullName"
-                      autoComplete="name"
-                      autoFocus
-                      value={formData.fullName}
-                      onChange={handleChange}
-                    />
-                  
-                    <FormLabel htmlFor="email"sx={{ fontWeight: 'bold' }}>Correo Electrónico</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      id="email"
-                      label="Ejemplo: Juan@gmail.com"
-                      name="email"
-                      autoComplete="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  
-                    <FormLabel htmlFor="rut"sx={{ fontWeight: 'bold' }}>Rut</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      id="rut"
-                      label="Ejemplo: 12345678-9"
-                      name="rut"
-                      autoComplete="rut"
-                      value={formData.rut}
-                      onChange={handleChange}
-                    />
-
-                   
-                  <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                  <FormLabel htmlFor="phone"sx={{ fontWeight: 'bold' }}>Telefono</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      id="phone"
-                      label="Ejemplo: +56912345XXX"
-                      name="phone"
-                      autoComplete="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                  <FormLabel htmlFor="country"sx={{ fontWeight: 'bold' }}>País</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      id="country"
-                      label="Ejemplo: Chile"
-                      name="country"
-                      autoComplete="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormLabel htmlFor="birthday"sx={{ fontWeight: 'bold' }}>Fecha de Nacimiento</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      id="birthday"
-                      label="Ejemplo: 01/01/2000"
-                      name="birthday"
-                      autoComplete="birthday"
-                      value={formData.birthday}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                  <FormLabel htmlFor="role"sx={{ fontWeight: 'bold' }}>Rol</FormLabel>
-                    <FormControl fullWidth margin="dense">
-                      <InputLabel id="role-label">Role</InputLabel>
-                      <Select
-                        labelId="role-label"
-                        id="role"
-                        value={formData.role}
-                        label="Role"
-                        name="role"
-                        onChange={handleChange}
-                      >
-                        <MenuItem value={'User'}>User</MenuItem>
-                        <MenuItem value={'Admin'}>Admin</MenuItem>
-                        {/* Agrega más roles según sea necesario */}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormLabel htmlFor="Password"sx={{ fontWeight: 'bold' }} >Contraseña</FormLabel>
-                    <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      name="password"
-                      label="*******"
-                      type="password"
-                      id="password"
-                      autoComplete="current-password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormLabel htmlFor="confirmPassword"sx={{ fontWeight: 'bold' }}>Confirmar Contraseña</FormLabel>
-                  <TextField
-                      margin="dense"
-                      required
-                      fullWidth
-                      name="confirmPassword"
-                      label="*******"
-                      type="password"
-                      id="confirmPassword"
-                      autoComplete="current-password"
-                     />
-                    </Grid>
-                </Grid>
-
-                <ColorButton type="submit" fullWidth variant="contained" sx={{mt: 3, mb:2 }}>
-                    Registrar
-                </ColorButton>
-
-              </form>
-            </ColorBox>
-          </Modal>
-        </div>
-      );
+    // Validations
+    if (name === 'rut') setErrors({ ...errors, rut: !isRutValid(value) });
+    else if (name === 'phone') setErrors({ ...errors, phone: !isPhoneValid(value) });
+    else if (name === 'password') setErrors({ ...errors, password: !isPasswordValid(value) });
+    else if (name === 'confirmPassword') setErrors({ ...errors, confirmPassword: formData.password !== value });
+    else if (name === 'email') {
+      const { valid, available } = await isEmailValidAndAvailable(value);
+      setErrors({
+        ...errors,
+        email: !valid ? 'Correo inválido' : !available ? 'Correo ya está en uso' : '',
+      });
     }
+  };
+  
+  
 
-export default Register; // Export the Register component
-             
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // Verificar errores antes de enviar
+    if (Object.values(errors).some(error => error)) {
+      alert('Por favor, corrija los errores antes de enviar.');
+      return;
+    }
+  
+    await signup(formData);
+    handleClose();
+  };
+
+  return (
+    <Modal
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="modal-modal-title"
+    aria-describedby="modal-modal-description"
+  >
+    <ColorBox sx={{ bgcolor: 'white', padding: '20px' }}>
+      <Typography id="modal-modal-title" variant="h6" component="h2"  sx={{ fontWeight: 'bold' }}>
+        Agregar usuario
+      </Typography>
+      <form onSubmit={handleSubmit}>
+         <FormLabel htmlFor="name"sx={{ fontWeight: 'bold' }}>Nombre Completo</FormLabel>
+            <TextField
+              margin="dense"
+              required
+              fullWidth
+              id="name"
+              label="Ejemplo: Juan Pérez"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              value={formData.name}
+              onChange={handleChange}
+            />
+          
+            <FormLabel htmlFor="email"sx={{ fontWeight: 'bold' }}>Correo Electrónico</FormLabel>
+            <TextField
+              error={!!errors.email}
+              helperText={errors.email}
+              margin="dense"
+              required
+              fullWidth
+              id="email"
+              label="Ejemplo: Juan@gmail.com"
+              name="email"
+              autoComplete="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+            <FormLabel htmlFor="rut"sx={{ fontWeight: 'bold' }}>Rut</FormLabel>
+            <TextField
+              error={errors.rut}
+              helperText={errors.rut ? 'Rut inválido' : ''}
+              margin="dense"
+              required
+              fullWidth
+              id="rut"
+              label="Ejemplo: 12.345.678-9"
+              name="rut"
+              autoComplete="rut"
+              value={formData.rut}
+              onChange={handleChange}
+            />
+            </Grid>
+
+           
+
+          <Grid item xs={12} sm={6}>
+          <FormLabel htmlFor="phone"sx={{ fontWeight: 'bold' }}>Telefono</FormLabel>
+            <TextField
+              error={errors.phone}
+              helperText={errors.phone ? 'Teléfono inválido' : ''}
+              margin="dense"
+              required
+              fullWidth
+              id="phone"
+              label="Ejemplo: +56912345XXX"
+              name="phone"
+              autoComplete="phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+          <FormLabel htmlFor="country"sx={{ fontWeight: 'bold' }}>País</FormLabel>
+            <TextField
+              margin="dense"
+              required
+              fullWidth
+              id="country"
+              label="Ejemplo: Chile"
+              name="country"
+              autoComplete="country"
+              value={formData.country}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormLabel htmlFor="birthday"sx={{ fontWeight: 'bold' }}>Fecha de Nacimiento</FormLabel>
+            <TextField
+              margin="dense"
+              required
+              fullWidth
+              id="birthday"
+              label="Fecha de Nacimiento"
+              name="birthday"
+              type="date" // Set type to date to enable the date picker
+              InputLabelProps={{
+                shrink: true, // This property is necessary to correctly display the label
+              }}
+              value={formData.birthday instanceof Date ? formData.birthday.toISOString().split('T')[0] : formData.birthday} // Ensure the date is in the correct format
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+          <FormLabel htmlFor="role"sx={{ fontWeight: 'bold' }}>Rol</FormLabel>
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="role-label">Role</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role"
+                value={formData.role}
+                label="Role"
+                name="role"
+                onChange={handleChange}
+              >
+                <MenuItem value={'user'}>User</MenuItem>
+                <MenuItem value={'admin'}>Admin</MenuItem>
+                {/* Agrega más roles según sea necesario */}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormLabel htmlFor="Password"sx={{ fontWeight: 'bold' }} >Contraseña</FormLabel>
+            <TextField
+              error={errors.password}
+              helperText={errors.password ? 'Contraseña inválida' : ''}
+              margin="dense"
+              required
+              fullWidth
+              name="password"
+              label="*******"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+              
+            />
+          </Grid>
+        </Grid>
+
+        <ColorButton type="submit" fullWidth variant="contained" sx={{mt: 3, mb:2 }}>
+            Registrar
+        </ColorButton>
+
+      </form>
+    </ColorBox>
+  </Modal>
+  );
+}
+
+export default Register;

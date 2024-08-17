@@ -1,10 +1,12 @@
 import { Box, Container, Typography } from "@mui/material";
-import ColorButton from "../components/ColorButton";
+import ColorButton from "../../components/ColorButton";
+import Notfound from "../../assets/img/notfound.png";
+import Logo from "../../assets/img/Logo.png";
 
 function NotFound() {
   return (
     <Container>
-      <img width={200} src="../../assets/Logo.png" alt="logo" />
+      <img width={200} src={Logo} alt="logo" />
       <div
         style={{
           display: "flex",
@@ -21,7 +23,7 @@ function NotFound() {
           height="100vh"
           gap={2}
         >
-          <img width={300} src="../../assets/notfound.png" alt="not found" />
+          <img width={300} src={Notfound} alt="not found" />
           <Typography variant="h2" component="h2" color={"var(--text-color)"}>
             404
           </Typography>
