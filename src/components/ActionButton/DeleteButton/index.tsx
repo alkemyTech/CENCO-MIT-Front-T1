@@ -56,7 +56,7 @@ export default function DeleteButton({
           textDecoration: disabled ? "none" : "underline",
           cursor: disabled ? "not-allowed" : "pointer",
         }}
-        underline="hover"
+        underline={disabled ? "none" : "hover"}
         disabled={disabled}
       >
         Delete
