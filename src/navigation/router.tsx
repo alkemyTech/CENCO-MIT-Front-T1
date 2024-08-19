@@ -3,6 +3,8 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router-dom";
+
+import Register from "../pages/FormRegister"; // Import the Register component
 import Login from "../pages/Login/Login";
 import DashboardAdmin from "../pages/DashboardAdmin/DashboardAdmin";
 import DashboardUser from "../pages/DashboardUser/DashboardUser";
@@ -11,6 +13,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { Role } from "../interfaces/User";
 import Profile from "../pages/Profile/Profile";
 import UserManagementView from "../pages/UserManagementView/UserManagementView";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,6 +44,7 @@ const router = createBrowserRouter(
       </Route>
 
       <Route path="/*" element={<NotFound />} />
+      <Route path="/register" element={<Register />} />
     </>
   )
 );

@@ -7,26 +7,43 @@ import {
   DialogTitle,
   Link,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 import { useState } from "react";
+import { deleteUser } from "../../../api/userServices";
 
 interface ActionButtonProps {
   userID: number;
+  disabled: boolean;
 }
 
-export default function DeleteButton({ userID }: Readonly<ActionButtonProps>) {
+export default function DeleteButton({
+  userID,
+  disabled,
+}: Readonly<ActionButtonProps>) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (!disabled) {
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleConfirm = () => {
-    setOpen(false);
+  const handleConfirm = async () => {
+    try {
+      await deleteUser(userID);
+      console.log("eliminadnod");
+      sessionStorage.setItem("deleteStatus", "success");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      sessionStorage.setItem("deleteStatus", "error");
+    } finally {
+      setOpen(false);
+      window.location.reload();
+    }
   };
 
   return (
@@ -34,8 +51,13 @@ export default function DeleteButton({ userID }: Readonly<ActionButtonProps>) {
       <Link
         href="#"
         onClick={handleClickOpen}
-        sx={{ color: red[500] }}
-        underline="hover"
+        sx={{
+          color: disabled ? grey[500] : red[500],
+          textDecoration: disabled ? "none" : "underline",
+          cursor: disabled ? "not-allowed" : "pointer",
+        }}
+        underline={disabled ? "none" : "hover"}
+        disabled={disabled}
       >
         Delete
       </Link>

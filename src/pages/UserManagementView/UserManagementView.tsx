@@ -4,13 +4,17 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterMenu from "../../components/FilterOptions";
 import UserTable from "../../components/UserTable";
 import SearchBar from "../../components/SearchBar";
+import Register from "../FormRegister";
 
 const UserManagementView = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [filterStatus, setFilterStatus] = useState<"" | "active" | "inactive">(
-    ""
-  );
+  const [filterStatus, setFilterStatus] = useState<"" | "active" | "inactive">("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  
+  // Add state for the modal
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -28,13 +32,7 @@ const UserManagementView = () => {
             <Grid item xs={9} md={10}>
               <SearchBar />
             </Grid>
-            <Grid
-              item
-              xs={3}
-              md={2}
-              justifyContent="end"
-              paddingLeft="0"
-            >
+            <Grid item xs={3} md={2} justifyContent="end" paddingLeft="0">
               <Button
                 variant="contained"
                 sx={{
@@ -51,6 +49,7 @@ const UserManagementView = () => {
                     width: "100%",
                   },
                 }}
+                onClick={handleOpen} // Attach the modal open function
               >
                 Add user
               </Button>
@@ -89,6 +88,9 @@ const UserManagementView = () => {
         onStatusFilterChange={setFilterStatus}
       />
       <UserTable sortOrder={sortOrder} filterStatus={filterStatus} />
+
+      {/* Add the Register component and pass the necessary props */}
+      <Register open={open} handleClose={handleClose} />
     </Box>
   );
 };
