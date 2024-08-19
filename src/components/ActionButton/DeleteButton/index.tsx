@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import { useState } from "react";
+import { deleteUser } from "../../../api/userServices";
+import { CustomAlert } from "../../CustomAlert";
 
 interface ActionButtonProps {
   userID: number;
@@ -25,8 +27,18 @@ export default function DeleteButton({ userID }: Readonly<ActionButtonProps>) {
     setOpen(false);
   };
 
-  const handleConfirm = () => {
-    setOpen(false);
+  const handleConfirm = async () => {
+    try {
+      await deleteUser(userID);
+      console.log("eliminadnod");
+      sessionStorage.setItem("deleteStatus", "success");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      sessionStorage.setItem("deleteStatus", "error");
+    } finally {
+      setOpen(false);
+      window.location.reload();
+    }
   };
 
   return (
