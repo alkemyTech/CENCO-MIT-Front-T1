@@ -30,6 +30,9 @@ export const searchUsersThunk = createAsyncThunk<User[], { name?: string; email?
   async (query, thunkAPI) => {
     try {
       const result = await searchUsers(query); 
+      if (result.length === 0) {
+        return thunkAPI.rejectWithValue('No se encontraron usuarios');
+      }
       return result; 
     } catch (error) {
       return thunkAPI.rejectWithValue('Error searching users');

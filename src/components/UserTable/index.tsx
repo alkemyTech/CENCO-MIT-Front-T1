@@ -86,7 +86,7 @@ const UserTable = ({ sortOrder, filterStatus }: UserTableProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {error ? (
+            {error && error === 'No se encontraron usuarios, ingresa un correo electronico con formato de correo correcto ej: carla@example.com' ? (
               <TableRow>
                 <TableCell colSpan={6} align="center">
                   <Box
@@ -99,25 +99,26 @@ const UserTable = ({ sortOrder, filterStatus }: UserTableProps) => {
                     <Typography variant="h6" component="div">
                       No se encontraron usuarios
                     </Typography>
-                    <Typography variant="body2" component="div" sx={{ marginTop: 1 }}>
-                      ingresa un correo electrónico con formato de correo correcto ej: 
-                      <Typography variant="body2" component="span" sx={{ fontWeight: 'bold' }}>
+                    <Typography
+                      variant="body2"
+                      component="div"
+                      sx={{ marginTop: 1 }}
+                    >
+                      ingresa un correo electrónico con formato de correo
+                      correcto ej:
+                      <Typography
+                        variant="body2"
+                        component="span"
+                        sx={{ fontWeight: "bold" }}
+                      >
                         &nbsp;carla@example.com
                       </Typography>
                     </Typography>
                   </Box>
                 </TableCell>
               </TableRow>
-            ) : currentUsers.length > 0 ? (
-              <RenderList users={currentUsers} />
             ) : (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  <Typography variant="h6">
-                    No se encontraron usuarios.
-                  </Typography>
-                </TableCell>
-              </TableRow>
+              <RenderList users={currentUsers} />
             )}
           </TableBody>
         </Table>
