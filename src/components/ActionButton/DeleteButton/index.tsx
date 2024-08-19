@@ -7,20 +7,25 @@ import {
   DialogTitle,
   Link,
 } from "@mui/material";
-import { red } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 import { useState } from "react";
 import { deleteUser } from "../../../api/userServices";
-import { CustomAlert } from "../../CustomAlert";
 
 interface ActionButtonProps {
   userID: number;
+  disabled: boolean;
 }
 
-export default function DeleteButton({ userID }: Readonly<ActionButtonProps>) {
+export default function DeleteButton({
+  userID,
+  disabled,
+}: Readonly<ActionButtonProps>) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (!disabled) {
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
@@ -46,8 +51,13 @@ export default function DeleteButton({ userID }: Readonly<ActionButtonProps>) {
       <Link
         href="#"
         onClick={handleClickOpen}
-        sx={{ color: red[500] }}
+        sx={{
+          color: disabled ? grey[500] : red[500],
+          textDecoration: disabled ? "none" : "underline",
+          cursor: disabled ? "not-allowed" : "pointer",
+        }}
         underline="hover"
+        disabled={disabled}
       >
         Delete
       </Link>

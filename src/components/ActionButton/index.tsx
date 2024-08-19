@@ -6,9 +6,13 @@ import DeleteButton from "./DeleteButton";
 
 interface ActionButtonProps {
   userID: number;
+  disabled: boolean;
 }
 
-export default function ActionButton({ userID }: Readonly<ActionButtonProps>) {
+export default function ActionButton({
+  userID,
+  disabled,
+}: Readonly<ActionButtonProps>) {
   // popover
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
 
@@ -45,7 +49,7 @@ export default function ActionButton({ userID }: Readonly<ActionButtonProps>) {
       >
         <Box display={"block"} padding={1.5}>
           <EditButton userID={userID} />
-          <DeleteButton userID={userID} />
+          <DeleteButton userID={userID} disabled={disabled} />
         </Box>
       </Popover>
     </>
