@@ -23,8 +23,6 @@ const ProtectedRoute = ({ requiredRole, children }: ProtectedRouteProps) => {
 
   if (requiredRole && role !== requiredRole) {
     return <Navigate to={role === Role.ADMIN ? "/dashboard/all-users" : "/dashboard/profile"} />;
-    console.log("Role:", role);
-console.log("Required Role:", requiredRole);
 
   }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Grid, MenuItem } from "@mui/material";
 import { User, Role } from "../../../interfaces/User";
 import ColorButton from "../../ColorButton";
@@ -6,20 +6,24 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 
 interface ProfileFormProps {
-  user: User;
-  onSave: (updatedUser: User) => void;
+  user: Partial<User>;
+  onSave: (updatedUser: Partial<User>) => void;
   isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
 }
 
 const ProfileForm = ({
   user,
   onSave,
   isEditing,
-  setIsEditing,
 }: ProfileFormProps) => {
-  const [formValues, setFormValues] = useState<User>({ ...user });
+  const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
+
+  useEffect(() => {
+    if (isEditing) {
+      setFormValues(user);
+    }
+  }, [user, isEditing]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -31,10 +35,14 @@ const ProfileForm = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (isEditing) {
-      onSave(formValues);
-      setIsEditing(false);
+
+    const updatedUser = { ...formValues };
+
+    if (!isPasswordEditing) {
+      delete updatedUser.password;
     }
+
+    onSave(updatedUser);
   };
 
   const handlePasswordIconClick = () => {
@@ -49,7 +57,7 @@ const ProfileForm = ({
             id="name"
             label="Full Name"
             name="name"
-            value={formValues.name}
+            value={formValues.name || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
             autoComplete="name"
@@ -60,7 +68,7 @@ const ProfileForm = ({
             id="email"
             label="Email"
             name="email"
-            value={formValues.email}
+            value={formValues.email || ""}
             onChange={handleInputChange}
             disabled
             autoComplete="email"
@@ -80,7 +88,7 @@ const ProfileForm = ({
             id="rut"
             label="Rut"
             name="rut"
-            value={formValues.rut}
+            value={formValues.rut || ""}
             onChange={handleInputChange}
             disabled
             autoComplete="off"
@@ -91,7 +99,7 @@ const ProfileForm = ({
             id="birthday"
             label="Birthday"
             name="birthday"
-            type="date" 
+            type="date"
             value={formValues.birthday || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
@@ -125,7 +133,7 @@ const ProfileForm = ({
             id="role"
             label="Role"
             name="role"
-            value={formValues.role}
+            value={formValues.role || ""}
             onChange={handleInputChange}
             disabled
             select

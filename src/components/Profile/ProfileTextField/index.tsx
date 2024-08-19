@@ -18,7 +18,7 @@ const ProfileTextField = ({
   id,
   label,
   name,
-  value,
+  value = "", 
   onChange,
   disabled,
   select,

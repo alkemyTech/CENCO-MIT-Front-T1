@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
-import { fetchUserProfile } from '../../redux/features/slices/authSlice';
-import ProfileForm from '../../components/Profile/ProfileForm';
+import { fetchUserProfile, updateUserProfile } from '../../redux/features/slices/authSlice';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
+import ProfileForm from '../../components/Profile/ProfileForm';
 import { User } from '../../interfaces/User';
 
 const Profile = () => {
@@ -24,8 +24,21 @@ const Profile = () => {
     setIsEditing(true);
   };
 
-  const handleSave = (updatedUser: User) => {
-    console.log('Saving user:', updatedUser);
+  const handleSave = async (updatedUser: Partial<User>) => {  
+    try {
+      const { name, phone, country, birthday } = updatedUser;
+
+      const filteredUser: Partial<User> = { name, phone, country, birthday };
+
+      await dispatch(updateUserProfile(filteredUser)).unwrap();
+      console.log('User updated successfully');
+
+      await dispatch(fetchUserProfile());
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    }
   };
 
   return (
@@ -50,9 +63,8 @@ const Profile = () => {
             <ProfileHeader onEdit={handleEdit} />
             <ProfileForm 
               user={user} 
-              onSave={handleSave} 
+              onSave={handleSave}  
               isEditing={isEditing} 
-              setIsEditing={setIsEditing}
             />
           </>
         )}
