@@ -22,6 +22,7 @@ const DashboardAdmin = () => {
 
   const handleAlert = () => {
     const deleteStatus = sessionStorage.getItem("deleteStatus");
+    const createStatus = sessionStorage.getItem("createStatus");
 
     if (deleteStatus) {
       if (deleteStatus === "success") {
@@ -36,13 +37,29 @@ const DashboardAdmin = () => {
           showAlert({ severity: "error", text: "Failed to delete user." })
         );
       }
-
-      // Clean up sessionStorage and hide alert after 3 seconds
-      setTimeout(() => {
-        sessionStorage.removeItem("deleteStatus");
-        dispatch(hideAlert());
-      }, 3000);
     }
+
+    if (createStatus) {
+      if (createStatus === "success") {
+        dispatch(
+          showAlert({
+            severity: "success",
+            text: "User created successfully!",
+          })
+        );
+      } else if (createStatus === "error") {
+        dispatch(
+          showAlert({ severity: "error", text: "Failed to create user." })
+        );
+      }
+    }
+
+    // Clean up sessionStorage and hide alert after 3 seconds
+    setTimeout(() => {
+      sessionStorage.removeItem("deleteStatus");
+      sessionStorage.removeItem("createStatus");
+      dispatch(hideAlert());
+    }, 3000);
   };
 
   useEffect(() => {
