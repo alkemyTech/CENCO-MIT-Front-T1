@@ -19,3 +19,18 @@ export const searchUsers = async (query: { name?: string; email?: string; countr
   return response.data.data.users.length > 0 ? response.data.data.users : [];
 };
 
+export const signup = async (userData: {
+  name: string;
+  rut: string;
+  email: string;
+  phone: string;
+  country: string;
+  birthday: Date;
+  role: string;
+  password: string;
+}, ): Promise<User> => {  
+  const response = await apiClient.post('/user/signup', userData);
+  return response.data;
+}
+
+
