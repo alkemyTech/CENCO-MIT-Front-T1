@@ -26,7 +26,7 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
   });
 
   const [errors, setErrors] = useState({
-    rut: false,
+    rut: '',
     phone: false,
     password: false,
     confirmPassword: false,
@@ -51,7 +51,13 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
     setFormData({ ...formData, [name]: value });
 
     // Validations
-    if (name === 'rut') setErrors({ ...errors, rut: !isRutValid(value) });
+    if (name === 'rut') {
+      const { valid, available } = await isRutValid(value);
+      setErrors({
+        ...errors,
+        rut: !valid ? 'Rut inválido' : !available ? 'Rut ya está en uso' : '',
+      });
+      }
     else if (name === 'phone') setErrors({ ...errors, phone: !isPhoneValid(value) });
     else if (name === 'password') setErrors({ ...errors, password: !isPasswordValid(value) });
     else if (name === 'birthday') setErrors({ ...errors, birthday: !isBirthdayValidAndAdult(value) });
@@ -140,8 +146,8 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
             <Grid item xs={12} sm={6}>
               <FormLabel htmlFor="rut" sx={{ fontWeight: 'bold' }}>Rut</FormLabel>
               <TextField
-                error={errors.rut}
-                helperText={errors.rut ? 'Rut inválido' : ''}
+                error={!!errors.rut}
+                helperText={errors.rut}
                 margin="dense"
                 required
                 fullWidth
@@ -195,10 +201,11 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
                 label="Fecha de Nacimiento"
                 name="birthday"
                 type="date"
+                defaultValue=""
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={formData.birthday instanceof Date ? formData.birthday.toISOString().split('T')[0] : formData.birthday}
+                value={formData.birthday ? formData.birthday : ''}
                 onChange={handleChange}
               />
             </Grid>
