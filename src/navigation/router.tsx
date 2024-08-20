@@ -28,8 +28,8 @@ const router = createBrowserRouter(
           </ProtectedRoute>
         }
       >
-        <Route path="all-users" element={<UserManagementView />} /> 
-        <Route path="perfil" element={<Profile />} /> 
+        <Route path="all-users" element={<UserManagementView />} />
+        <Route path="perfil" element={<Profile />} />
       </Route>
 
       <Route
@@ -39,8 +39,10 @@ const router = createBrowserRouter(
             <DashboardUser />
           </ProtectedRoute>
         }
-      />
-      
+      >
+        <Route path="profile" element={<Profile />} />
+      </Route>
+
       <Route path="/*" element={<NotFound />} />
       <Route path="/register" element={<Register />} />
     </>
