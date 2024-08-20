@@ -1,48 +1,61 @@
-import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import { FormControl, FormLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { Grid } from '@mui/material';
-import ColorButton from '../components/ColorButton';
-import ColorBox from '../components/Box';
-import { signup } from '../api/userServices';
-import { isRutValid } from '../validations/rutValidation';
-import { isPhoneValid } from '../validations/phoneValidation';
-import { isPasswordValid } from '../validations/passwordValidation';
-import { isEmailValidAndAvailable } from '../validations';
-import { isBirthdayValidAndAdult } from '../validations/birthdayValidation';
+import * as React from "react";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import {
+  FormControl,
+  FormLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import { Grid } from "@mui/material";
+import ColorButton from "../components/ColorButton";
+import ColorBox from "../components/Box";
+import { signup } from "../api/userServices";
+import { isRutValid } from "../validations/rutValidation";
+import { isPhoneValid } from "../validations/phoneValidation";
+import { isPasswordValid } from "../validations/passwordValidation";
+import { isEmailValidAndAvailable } from "../validations";
+import { isBirthdayValidAndAdult } from "../validations/birthdayValidation";
 
-const Register = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
+const Register = ({
+  open,
+  handleClose,
+}: {
+  open: boolean;
+  handleClose: () => void;
+}) => {
   const [formData, setFormData] = useState({
-    name: '',
-    rut: '',
-    email: '',
-    phone: '',
-    country: '',
+    name: "",
+    rut: "",
+    email: "",
+    phone: "",
+    country: "",
     birthday: new Date(),
-    role: '',
-    password: '',
+    role: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState({
-    rut: '',
+    rut: "",
     phone: false,
     password: false,
     confirmPassword: false,
-    email: '',
+    email: "",
     birthday: false,
   });
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = 'hidden'; // Prevent scrolling on body when modal is open
+      document.body.style.overflow = "hidden"; // Prevent scrolling on body when modal is open
     } else {
-      document.body.style.overflow = ''; // Re-enable scrolling on body when modal is closed
+      document.body.style.overflow = ""; // Re-enable scrolling on body when modal is closed
     }
 
     return () => {
-      document.body.style.overflow = ''; // Clean up in case the component is unmounted
+      document.body.style.overflow = ""; // Clean up in case the component is unmounted
     };
   }, [open]);
 
@@ -51,22 +64,29 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
     setFormData({ ...formData, [name]: value });
 
     // Validations
-    if (name === 'rut') {
+    if (name === "rut") {
       const { valid, available } = await isRutValid(value);
       setErrors({
         ...errors,
-        rut: !valid ? 'Rut inválido' : !available ? 'Rut ya está en uso' : '',
+        rut: !valid ? "Rut inválido" : !available ? "Rut ya está en uso" : "",
       });
-      }
-    else if (name === 'phone') setErrors({ ...errors, phone: !isPhoneValid(value) });
-    else if (name === 'password') setErrors({ ...errors, password: !isPasswordValid(value) });
-    else if (name === 'birthday') setErrors({ ...errors, birthday: !isBirthdayValidAndAdult(value) });
-    else if (name === 'confirmPassword') setErrors({ ...errors, confirmPassword: formData.password !== value });
-    else if (name === 'email') {
+    } else if (name === "phone")
+      setErrors({ ...errors, phone: !isPhoneValid(value) });
+    else if (name === "password")
+      setErrors({ ...errors, password: !isPasswordValid(value) });
+    else if (name === "birthday")
+      setErrors({ ...errors, birthday: !isBirthdayValidAndAdult(value) });
+    else if (name === "confirmPassword")
+      setErrors({ ...errors, confirmPassword: formData.password !== value });
+    else if (name === "email") {
       const { valid, available } = await isEmailValidAndAvailable(value);
       setErrors({
         ...errors,
-        email: !valid ? 'Correo inválido' : !available ? 'Correo ya está en uso' : '',
+        email: !valid
+          ? "Correo inválido"
+          : !available
+          ? "Correo ya está en uso"
+          : "",
       });
     }
   };
@@ -75,14 +95,22 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
     e.preventDefault();
 
     // Verificar errores antes de enviar
-    if (Object.values(errors).some(error => error)) {
-      alert('Por favor, corrija los errores antes de enviar.');
+    if (Object.values(errors).some((error) => error)) {
+      alert("Por favor, corrija los errores antes de enviar.");
       return;
     }
 
-    await signup(formData);
-    handleClose();
-    window.location.reload();
+    try {
+      await signup(formData);
+      console.log("eliminadnod");
+      sessionStorage.setItem("createStatus", "success");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      sessionStorage.setItem("createStatus", "error");
+    } finally {
+      handleClose();
+      window.location.reload();
+    }
   };
 
   return (
@@ -92,28 +120,35 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <ColorBox
         sx={{
-          bgcolor: 'white',
-          padding: '20px',
+          bgcolor: "white",
+          padding: "20px",
           maxWidth: 600,
-          width: '100%',
-          maxHeight: '90vh',
-          overflowY: 'auto',
+          width: "100%",
+          maxHeight: "90vh",
+          overflowY: "auto",
         }}
       >
-        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+          sx={{ fontWeight: "bold" }}
+        >
           Agregar usuario
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <FormLabel htmlFor="name" sx={{ fontWeight: 'bold' }}>Nombre Completo</FormLabel>
+              <FormLabel htmlFor="name" sx={{ fontWeight: "bold" }}>
+                Nombre Completo
+              </FormLabel>
               <TextField
                 margin="dense"
                 required
@@ -128,7 +163,9 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
               />
             </Grid>
             <Grid item xs={12}>
-              <FormLabel htmlFor="email" sx={{ fontWeight: 'bold' }}>Correo Electrónico</FormLabel>
+              <FormLabel htmlFor="email" sx={{ fontWeight: "bold" }}>
+                Correo Electrónico
+              </FormLabel>
               <TextField
                 error={!!errors.email}
                 helperText={errors.email}
@@ -144,7 +181,9 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormLabel htmlFor="rut" sx={{ fontWeight: 'bold' }}>Rut</FormLabel>
+              <FormLabel htmlFor="rut" sx={{ fontWeight: "bold" }}>
+                Rut
+              </FormLabel>
               <TextField
                 error={!!errors.rut}
                 helperText={errors.rut}
@@ -160,10 +199,12 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormLabel htmlFor="phone" sx={{ fontWeight: 'bold' }}>Teléfono</FormLabel>
+              <FormLabel htmlFor="phone" sx={{ fontWeight: "bold" }}>
+                Teléfono
+              </FormLabel>
               <TextField
                 error={errors.phone}
-                helperText={errors.phone ? 'Teléfono inválido' : ''}
+                helperText={errors.phone ? "Teléfono inválido" : ""}
                 margin="dense"
                 required
                 fullWidth
@@ -176,7 +217,9 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormLabel htmlFor="country" sx={{ fontWeight: 'bold' }}>País</FormLabel>
+              <FormLabel htmlFor="country" sx={{ fontWeight: "bold" }}>
+                País
+              </FormLabel>
               <TextField
                 margin="dense"
                 required
@@ -190,10 +233,14 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormLabel htmlFor="birthday" sx={{ fontWeight: 'bold' }}>Fecha de Nacimiento</FormLabel>
+              <FormLabel htmlFor="birthday" sx={{ fontWeight: "bold" }}>
+                Fecha de Nacimiento
+              </FormLabel>
               <TextField
                 error={errors.birthday}
-                helperText={errors.birthday ? 'Fecha de nacimiento inválida' : ''}
+                helperText={
+                  errors.birthday ? "Fecha de nacimiento inválida" : ""
+                }
                 margin="dense"
                 required
                 fullWidth
@@ -205,12 +252,14 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={formData.birthday ? formData.birthday : ''}
+                value={formData.birthday ? formData.birthday : ""}
                 onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormLabel htmlFor="role" sx={{ fontWeight: 'bold' }}>Rol</FormLabel>
+              <FormLabel htmlFor="role" sx={{ fontWeight: "bold" }}>
+                Rol
+              </FormLabel>
               <FormControl fullWidth margin="dense">
                 <InputLabel id="role-label">Role</InputLabel>
                 <Select
@@ -221,16 +270,18 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
                   name="role"
                   onChange={handleChange}
                 >
-                  <MenuItem value={'user'}>User</MenuItem>
-                  <MenuItem value={'admin'}>Admin</MenuItem>
+                  <MenuItem value={"user"}>User</MenuItem>
+                  <MenuItem value={"admin"}>Admin</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormLabel htmlFor="password" sx={{ fontWeight: 'bold' }}>Contraseña</FormLabel>
+              <FormLabel htmlFor="password" sx={{ fontWeight: "bold" }}>
+                Contraseña
+              </FormLabel>
               <TextField
                 error={errors.password}
-                helperText={errors.password ? 'Contraseña inválida' : ''}
+                helperText={errors.password ? "Contraseña inválida" : ""}
                 margin="dense"
                 required
                 fullWidth
@@ -245,7 +296,12 @@ const Register = ({ open, handleClose }: { open: boolean, handleClose: () => voi
             </Grid>
           </Grid>
 
-          <ColorButton type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <ColorButton
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
             Registrar
           </ColorButton>
         </form>
