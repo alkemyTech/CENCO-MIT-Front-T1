@@ -11,20 +11,26 @@ interface ProfileTextFieldProps {
   select?: boolean;
   children?: ReactNode;
   autoComplete?: string;
-  type?: string; 
+  type?: string;
+  error?: boolean;  
+  helperText?: string; 
+  placeholder?: string; 
 }
 
 const ProfileTextField = ({
   id,
   label,
   name,
-  value,
+  value = "",
   onChange,
   disabled,
   select,
   children,
   autoComplete,
-  type, 
+  type,
+  error = false,
+  helperText = "",
+  placeholder = "",  
 }: ProfileTextFieldProps) => (
   <>
     <Typography variant="body1" gutterBottom>
@@ -39,7 +45,10 @@ const ProfileTextField = ({
       disabled={disabled}
       select={select}
       autoComplete={autoComplete}
-      type={type} 
+      type={type}
+      error={error}  
+      helperText={helperText}  
+      placeholder={placeholder}  
       sx={{ borderRadius: '10px', '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
     >
       {children}

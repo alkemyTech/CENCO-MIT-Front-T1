@@ -1,25 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Box, Grid, MenuItem } from "@mui/material";
 import { User, Role } from "../../../interfaces/User";
 import ColorButton from "../../ColorButton";
 import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
+import { validateProfileForm } from "../../../utils/validateProfileForm";
 
 interface ProfileFormProps {
-  user: User;
-  onSave: (updatedUser: User) => void;
+  user: Partial<User>;
+  onSave: (updatedUser: Partial<User>) => void;
   isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
 }
 
-const ProfileForm = ({
-  user,
-  onSave,
-  isEditing,
-  setIsEditing,
-}: ProfileFormProps) => {
-  const [formValues, setFormValues] = useState<User>({ ...user });
+const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
+  const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    if (isEditing) {
+      setFormValues(user);
+    }
+  }, [user, isEditing]);
+
+  const validate = useCallback(() => {
+    const newErrors = validateProfileForm(formValues);
+    setErrors(newErrors);
+  }, [formValues]);
+
+  useEffect(() => {
+    validate();
+  }, [formValues, validate]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -31,10 +42,16 @@ const ProfileForm = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (isEditing) {
-      onSave(formValues);
-      setIsEditing(false);
-    }
+
+    if (Object.keys(errors).length === 0) {
+      const updatedUser = { ...formValues };
+
+      if (!isPasswordEditing) {
+        delete updatedUser.password;
+      }
+
+      onSave(updatedUser);
+    } 
   };
 
   const handlePasswordIconClick = () => {
@@ -49,10 +66,13 @@ const ProfileForm = ({
             id="name"
             label="Full Name"
             name="name"
-            value={formValues.name}
+            value={formValues.name || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
             autoComplete="name"
+            error={!!errors.name}
+            helperText={errors.name}
+            placeholder="Enter your full name"  // Placeholder
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -60,10 +80,11 @@ const ProfileForm = ({
             id="email"
             label="Email"
             name="email"
-            value={formValues.email}
+            value={formValues.email || ""}
             onChange={handleInputChange}
             disabled
             autoComplete="email"
+            placeholder="ej: carla@example.com"  
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -80,10 +101,11 @@ const ProfileForm = ({
             id="rut"
             label="Rut"
             name="rut"
-            value={formValues.rut}
+            value={formValues.rut || ""}
             onChange={handleInputChange}
             disabled
             autoComplete="off"
+            placeholder="Ej: 18.123.123-3"  
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -91,11 +113,14 @@ const ProfileForm = ({
             id="birthday"
             label="Birthday"
             name="birthday"
-            type="date" 
+            type="date"
             value={formValues.birthday || ""}
             onChange={handleInputChange}
             disabled={!isEditing}
             autoComplete="bday"
+            error={!!errors.birthday}
+            helperText={errors.birthday}
+            placeholder="Ej: 08-10-1995"  
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -107,6 +132,9 @@ const ProfileForm = ({
             onChange={handleInputChange}
             disabled={!isEditing}
             autoComplete="tel"
+            error={!!errors.phone}
+            helperText={errors.phone}
+            placeholder="Ej: +56912572545"  
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -118,6 +146,9 @@ const ProfileForm = ({
             onChange={handleInputChange}
             disabled={!isEditing}
             autoComplete="country-name"
+            error={!!errors.country}
+            helperText={errors.country}
+            placeholder="Ej: Chile"  
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -125,7 +156,7 @@ const ProfileForm = ({
             id="role"
             label="Role"
             name="role"
-            value={formValues.role}
+            value={formValues.role || ""}
             onChange={handleInputChange}
             disabled
             select
@@ -145,8 +176,8 @@ const ProfileForm = ({
               backgroundColor: isEditing ? "#09BEFB" : "#e0e0e0",
               padding: "10px 0",
               width: {
-                xs: "100%", 
-                sm: "60%",  
+                xs: "100%",
+                sm: "60%",
               },
             }}
           >

@@ -6,7 +6,7 @@ This project is the frontend for the User Management Platform developed for Tale
 
 [User Management Design on Figma](https://www.figma.com/design/VvCFVh2dR3Am2IY9wNKoZS/User-Management?node-id=0-1&t=Af86guPittelMT3A-1)
 
-![Wireframe](./assets/wireframe.jpeg)
+![Wireframe](./src/assets/img/wireframe.jpeg)
 
 ## Dependencies & Justifications 🛠️
 
