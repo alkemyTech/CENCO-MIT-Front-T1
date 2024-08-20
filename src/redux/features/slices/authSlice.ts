@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import jwtDecode from "jwt-decode";  
 import apiClient from "../../../api/api";
 import { User, Role } from "../../../interfaces/User";
-import { fetchProfile } from "../../../api/userServices"; 
+import { fetchProfile, updateProfile } from "../../../api/userServices"; 
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -60,6 +60,21 @@ export const fetchUserProfile = createAsyncThunk<
   }
 );
 
+export const updateUserProfile = createAsyncThunk<
+  User,
+  Partial<User>,
+  { rejectValue: string }
+>(
+  'auth/updateUserProfile',
+  async (updatedUser, thunkAPI) => {
+    try {
+      const response = await updateProfile(updatedUser);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to update user profile');
+    }
+  }
+);
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -103,6 +118,17 @@ export const authSlice = createSlice({
       })
       .addCase(fetchUserProfile.pending, (state) => {
         state.status = 'loading';  
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action: PayloadAction<User>) => {
+        state.user = action.payload; 
+        state.status = 'succeeded';
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload || 'Failed to update user profile';
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.status = 'loading';
       });
   },
 });

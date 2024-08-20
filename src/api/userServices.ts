@@ -29,6 +29,10 @@ export const searchUsers = async (query: {
   return response.data.data.users.length > 0 ? response.data.data.users : [];
 };
 
+export const updateProfile = async (user: Partial<User>): Promise<User> => {
+  const response = await apiClient.patch<User>('/user/updateByUser', user);
+  return response.data;
+};
 export const signup = async (userData: {
   name: string;
   rut: string;

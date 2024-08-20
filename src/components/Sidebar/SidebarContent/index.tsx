@@ -3,7 +3,6 @@ import { List, Box } from '@mui/material';
 import SidebarItem from '../SidebarItem';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { SidebarContentProps } from '../../../interfaces/SidebarInterfaces';
 
@@ -31,13 +30,7 @@ const SidebarContent = ({ isMobile, onLinkClick }: SidebarContentProps) => {
         active={activeItem === 'Profile'}
         onClick={() => handleItemClick('Profile')}
       />
-      <Box my={5} />
-      <SidebarItem
-        label="Setting"
-        icon={<SettingsIcon />}
-        active={activeItem === 'Setting'}
-        onClick={() => handleItemClick('Setting')}
-      />
+      <Box my={10} />
       <SidebarItem
         label="Logout"
         icon={<ExitToAppIcon />}

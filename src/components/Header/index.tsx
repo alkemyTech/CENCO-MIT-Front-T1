@@ -12,7 +12,7 @@ const Header = ({ onDrawerToggle }: { onDrawerToggle: () => void }) => {
 
   useEffect(() => {
     if (!user) {
-      dispatch(fetchUserProfile()); 
+      dispatch(fetchUserProfile());
     }
   }, [dispatch, user]);
 
@@ -37,7 +37,7 @@ const Header = ({ onDrawerToggle }: { onDrawerToggle: () => void }) => {
       >
         <Grid item xs={9} sm={8} md={11}>
           <Typography variant="h6" component="h2">
-            Hello, {user.name} 
+            Hello, {user.name}
           </Typography>
         </Grid>
         <Grid
@@ -56,7 +56,15 @@ const Header = ({ onDrawerToggle }: { onDrawerToggle: () => void }) => {
               marginRight: 2,
             }}
           />
-          <Box textAlign="center">
+          <Box
+            textAlign="center"
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "100px",
+            }}
+          >
             <Typography variant="subtitle1">{user.name}</Typography>
             <Typography variant="caption">{roleLabel}</Typography>
           </Box>
