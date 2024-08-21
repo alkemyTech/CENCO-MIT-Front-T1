@@ -6,6 +6,8 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 interface ProfileFormProps {
   user: Partial<User>;
@@ -18,6 +20,11 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { userID } = useParams<{ userID: string }>();
+  let isUserId = false;
+
+  if(userID){
+    isUserId = true;
+  }
 
   useEffect(() => {
     if (isEditing) {
@@ -86,7 +93,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="email"
             value={formValues.email || ""}
             onChange={handleInputChange}
-            disabled
+            disabled= {userID ? !isEditing : true}
             autoComplete="email"
             placeholder="ej: carla@example.com"
           />
@@ -120,7 +127,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             type="date"
             value={formValues.birthday || ""}
             onChange={handleInputChange}
-            disabled={!isEditing}
+            disabled= {userID ? true : !isEditing}
             autoComplete="bday"
             error={!!errors.birthday}
             helperText={errors.birthday}
@@ -148,7 +155,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="country"
             value={formValues.country || ""}
             onChange={handleInputChange}
-            disabled={!isEditing}
+            disabled= {userID ? true : !isEditing}
             autoComplete="country-name"
             error={!!errors.country}
             helperText={errors.country}
@@ -162,7 +169,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="role"
             value={formValues.role || ""}
             onChange={handleInputChange}
-            disabled
+            disabled= {userID ? !isEditing : true}
             select
             autoComplete="off"
           >
