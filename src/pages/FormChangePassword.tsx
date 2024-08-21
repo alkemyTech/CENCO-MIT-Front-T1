@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Typography, TextField, Grid, Button } from '@mui/material';
+import { Modal, Typography, TextField, Grid } from '@mui/material';
 import { changePassword } from '../api/userServices';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { showAlert }  from '../redux/features/slices/alertSlice';
 import { isPasswordValid } from '../validations/changePassword';
 import ColorButton from '../components/ColorButton';
 
@@ -10,11 +10,6 @@ interface FormChangePasswordProps {
   open: boolean;
   onClose: () => void;
 }
-
-const passwordsMatch = (newPassword: string, confirmPassword: string) => newPassword === confirmPassword;
-
-    
-
 
 const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }) => {
   const [formData, setFormData] = useState({
@@ -29,7 +24,6 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
     confirmPassword: '',
   });
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -76,19 +70,17 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // Validate field on change
     const error = validateField(name, value);
     setErrors({ ...errors, [name]: error });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    // Validate all fields before submission
+
     const currentPasswordError = validateField('currentPassword', formData.currentPassword);
     const newPasswordError = validateField('newPassword', formData.newPassword);
     const confirmPasswordError = validateField('confirmPassword', formData.confirmPassword);
-  
+
     if (currentPasswordError || newPasswordError || confirmPasswordError) {
       setErrors({
         currentPassword: currentPasswordError,
@@ -97,34 +89,33 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
       });
       return;
     }
-  
+
     try {
-        // Asumiendo que ya validaste los campos antes de este bloque de código
-        const response = await changePassword(formData.currentPassword, formData.newPassword);
-        console.log(response.statusCode, response.message);
-      
-        switch (response.statusCode) {
-          case 401:
-            alert('La contraseña actual no coincide.');
-            break;
-          case 200:
-            alert('Contraseña cambiada con éxito');
-            break;
-          case 422: // Asumiendo que 422 es el código de estado para errores de validación
-            alert('Error de validación. Por favor, revisa los campos.');
-            break;
-          default:
-            alert('Error desconocido al cambiar la contraseña');
-            break;
-        }
-      } catch (error) {
-        console.error('Error al cambiar la contraseña:', error);
-        alert('Error al cambiar la contraseña');
-        }
-    };
+      const response = await changePassword(formData.currentPassword, formData.newPassword);
+
+      switch (response.statusCode) {
+        case 401:
+          dispatch(showAlert({ severity: 'error', text: 'La contraseña actual no coincide.' }));
+          break;
+        case 200:
+          dispatch(showAlert({ severity: 'success', text: 'Contraseña cambiada con éxito' }));
+          break;
+        case 422:
+          dispatch(showAlert({ severity: 'error', text: 'Error de validación. Por favor, revisa los campos.' }));
+          break;
+        default:
+          dispatch(showAlert({ severity: 'error', text: 'Error desconocido al cambiar la contraseña' }));
+          break;
+      }
+    } catch (error) {
+      console.error('Error al cambiar la contraseña:', error);
+      dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
+    }
+
+    onClose();
+  };
 
   const handleClose = () => {
-   
     setFormData({
       currentPassword: '',
       newPassword: '',
@@ -135,13 +126,12 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
       newPassword: '',
       confirmPassword: '',
     });
-    
   };
 
   const handleCancel = () => {
     onClose();
     handleClose();
-    };
+  };
 
   return (
     <Modal
@@ -155,7 +145,7 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
         justifyContent: 'center',
       }}
     >
-      <div style={{ backgroundColor: 'white', padding: '40px', maxWidth: '600px', width: '100%', borderRadius: '10px'}}>
+      <div style={{ backgroundColor: 'white', padding: '40px', maxWidth: '600px', width: '100%', borderRadius: '10px' }}>
         <Typography id="change-password-modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
           Cambiar Contraseña
         </Typography>
@@ -211,7 +201,6 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
           <ColorButton onClick={handleCancel} fullWidth variant="contained" sx={{ mt: 3 }}>
             Cancelar
           </ColorButton>
-          
         </form>
       </div>
     </Modal>
