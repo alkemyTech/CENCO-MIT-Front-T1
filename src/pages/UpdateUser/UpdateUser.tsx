@@ -38,8 +38,8 @@ const UpdateUser = () => {
         setLoading(true);
         try {
 
-            const { name, phone, email } = updatedUserById;
-            const filteredUser: Partial<User> = { name, phone, email };
+            const { name, phone, email, role } = updatedUserById;
+            const filteredUser: Partial<User> = { name, phone, email, role };
 
             await dispatch(updateUserByAdmin({ id: userIdDef, filteredUser })).unwrap();
             await dispatch(fetchUserProfileById(userIdDef));
