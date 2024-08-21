@@ -46,3 +46,28 @@ export const signup = async (userData: {
   const response = await apiClient.post("/user/signup", userData);
   return response.data;
 };
+export const changePassword = async (currentPassword: string, newPassword: string) => {
+  try {
+    const response = await apiClient.post('/user/change-password', {
+      currentPassword,
+      newPassword,
+    });
+
+    // Access status code and message from the response
+    const { status, data } = response;
+    console.log(status, data);
+    if (status === 401) {
+      // Handle unauthorized response
+      console.error(data.message || 'Unauthorized');
+    } else if (status === 200) {
+      // Handle success response
+      console.log(data.message || 'Password updated successfully');
+    }
+
+    return data;
+  } catch (error) {
+    // Handle errors from the API call
+    console.error('An error occurred:', error);
+    throw error;  // Re-throw the error to be handled by the caller
+  }
+};
