@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, FormEvent } from "react";
 import { Box, Grid, MenuItem } from "@mui/material";
 import { User, Role } from "../../../interfaces/User";
 import ColorButton from "../../ColorButton";
@@ -6,6 +6,9 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
 import { useParams } from "react-router-dom";
+import Confirmation from "../../Confirmation";
+import { useDispatch } from "react-redux";
+import { showConfirmation } from "../../../redux/features/slices/confirmationSlice";
 
 interface ProfileFormProps {
   user: Partial<User>;
@@ -24,6 +27,9 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
       setFormValues(user);
     }
   }, [user, isEditing]);
+
+  const dispatch = useDispatch();
+
 
   const validate = useCallback(() => {
     const newErrors = validateProfileForm(formValues);
@@ -46,14 +52,18 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
     event.preventDefault();
 
     if (Object.keys(errors).length === 0) {
-      const updatedUser = { ...formValues };
-
-      if (!isPasswordEditing) {
-        delete updatedUser.password;
-      }
-
-      onSave(updatedUser);
+      dispatch(showConfirmation());
     }
+  };
+
+  const handleConfirm = () => {
+    const updatedUser = { ...formValues };
+
+    if (!isPasswordEditing) {
+      delete updatedUser.password;
+    }
+
+    onSave(updatedUser);
   };
 
   const handlePasswordIconClick = () => {
@@ -61,6 +71,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
       setIsPasswordEditing(true);
     }
   };
+
 
   return (
     <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
@@ -86,7 +97,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="email"
             value={formValues.email || ""}
             onChange={handleInputChange}
-            disabled= {userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
+            disabled={userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
             autoComplete="email"
             placeholder="ej: carla@example.com"
           />
@@ -120,7 +131,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             type="date"
             value={formValues.birthday || ""}
             onChange={handleInputChange}
-            disabled= {userID ? true : !isEditing}
+            disabled={userID ? true : !isEditing}
             autoComplete="bday"
             error={!!errors.birthday}
             helperText={errors.birthday}
@@ -148,7 +159,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="country"
             value={formValues.country || ""}
             onChange={handleInputChange}
-            disabled= {userID ? true : !isEditing}
+            disabled={userID ? true : !isEditing}
             autoComplete="country-name"
             error={!!errors.country}
             helperText={errors.country}
@@ -162,7 +173,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="role"
             value={formValues.role || ""}
             onChange={handleInputChange}
-            disabled= {userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
+            disabled={userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
             select
             autoComplete="off"
           >
@@ -187,6 +198,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
           >
             Guardar Cambios
           </ColorButton>
+          <Confirmation onConfirm={handleConfirm}/>
         </Grid>
       </Grid>
     </Box>
