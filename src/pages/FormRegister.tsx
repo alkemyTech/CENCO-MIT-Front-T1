@@ -19,6 +19,7 @@ import { isPhoneValid } from "../validations/phoneValidation";
 import { isPasswordValid } from "../validations/passwordValidation";
 import { isEmailValidAndAvailable } from "../validations";
 import { isBirthdayValidAndAdult } from "../validations/birthdayValidation";
+import { Role } from "../interfaces/User";
 
 const Register = ({
   open,
@@ -34,7 +35,7 @@ const Register = ({
     phone: "",
     country: "",
     birthday: new Date(),
-    role: "",
+    role: "user" as Role,
     password: "",
   });
 
@@ -45,6 +46,7 @@ const Register = ({
     confirmPassword: false,
     email: "",
     birthday: false,
+    role: false, // Add the 'role' property
   });
 
   useEffect(() => {
@@ -78,6 +80,9 @@ const Register = ({
       setErrors({ ...errors, birthday: !isBirthdayValidAndAdult(value) });
     else if (name === "confirmPassword")
       setErrors({ ...errors, confirmPassword: formData.password !== value });
+    else if (name === "role") {
+      setFormData({ ...formData, role: value });
+    }
     else if (name === "email") {
       const { valid, available } = await isEmailValidAndAvailable(value);
       setErrors({
@@ -263,6 +268,8 @@ const Register = ({
               <FormControl fullWidth margin="dense">
                 <InputLabel id="role-label">Role</InputLabel>
                 <Select
+                  eroor={errors.role}
+                  type="role"
                   labelId="role-label"
                   id="role"
                   value={formData.role}
