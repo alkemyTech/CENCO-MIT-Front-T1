@@ -5,6 +5,7 @@ import ColorButton from "../../ColorButton";
 import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
+import { useParams } from "react-router-dom";
 
 interface ProfileFormProps {
   user: Partial<User>;
@@ -16,6 +17,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { userID } = useParams<{ userID: string }>();
 
   useEffect(() => {
     if (isEditing) {
@@ -51,11 +53,13 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
       }
 
       onSave(updatedUser);
-    } 
+    }
   };
 
   const handlePasswordIconClick = () => {
-    setIsPasswordEditing(true);
+    if (!userID) {
+      setIsPasswordEditing(true);
+    }
   };
 
   return (
@@ -84,7 +88,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             onChange={handleInputChange}
             disabled
             autoComplete="email"
-            placeholder="ej: carla@example.com"  
+            placeholder="ej: carla@example.com"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -105,7 +109,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             onChange={handleInputChange}
             disabled
             autoComplete="off"
-            placeholder="Ej: 18.123.123-3"  
+            placeholder="Ej: 18.123.123-3"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -120,7 +124,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="bday"
             error={!!errors.birthday}
             helperText={errors.birthday}
-            placeholder="Ej: 08-10-1995"  
+            placeholder="Ej: 08-10-1995"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -134,7 +138,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="tel"
             error={!!errors.phone}
             helperText={errors.phone}
-            placeholder="Ej: +56912572545"  
+            placeholder="Ej: +56912572545"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -148,7 +152,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="country-name"
             error={!!errors.country}
             helperText={errors.country}
-            placeholder="Ej: Chile"  
+            placeholder="Ej: Chile"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
