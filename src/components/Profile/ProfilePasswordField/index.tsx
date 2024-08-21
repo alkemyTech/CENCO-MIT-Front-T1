@@ -16,6 +16,7 @@ interface ProfilePasswordFieldProps {
   autoComplete?: string;
 }
 
+
 const ProfilePasswordField = ({
   value,
   onChange,
@@ -23,6 +24,9 @@ const ProfilePasswordField = ({
   isPasswordEditing,
   autoComplete,
 }: ProfilePasswordFieldProps) => (
+
+  
+
   <>
     <Typography variant="body1" gutterBottom>
       Password

@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import Confirmation from "../../Confirmation";
 import { useDispatch } from "react-redux";
 import { showConfirmation } from "../../../redux/features/slices/confirmationSlice";
+import FormChangePassword from "../../../pages/FormChangePassword";
 
 interface ProfileFormProps {
   user: Partial<User>;
@@ -21,6 +22,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { userID } = useParams<{ userID: string }>();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -62,14 +64,18 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
     if (!isPasswordEditing) {
       delete updatedUser.password;
     }
-
-    onSave(updatedUser);
+      onSave(updatedUser);
+    }
   };
 
   const handlePasswordIconClick = () => {
     if (!userID) {
-      setIsPasswordEditing(true);
+      setOpen(true);
     }
+  };
+
+  const handlePasswordModalClose = () => {
+    setOpen(false);
   };
 
 
@@ -104,7 +110,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <ProfilePasswordField
-            value="********"
+            value="**"
             onChange={handleInputChange}
             onPasswordIconClick={handlePasswordIconClick}
             isPasswordEditing={isPasswordEditing}
@@ -201,6 +207,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
           <Confirmation onConfirm={handleConfirm}/>
         </Grid>
       </Grid>
+      <FormChangePassword open={open} onClose={handlePasswordModalClose} />
     </Box>
   );
 };
