@@ -86,7 +86,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="email"
             value={formValues.email || ""}
             onChange={handleInputChange}
-            disabled= {userID ? !isEditing : true}
+            disabled= {userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
             autoComplete="email"
             placeholder="ej: carla@example.com"
           />
@@ -162,7 +162,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="role"
             value={formValues.role || ""}
             onChange={handleInputChange}
-            disabled= {userID ? !isEditing : true}
+            disabled= {userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
             select
             autoComplete="off"
           >
