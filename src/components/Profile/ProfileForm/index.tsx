@@ -5,6 +5,7 @@ import ColorButton from "../../ColorButton";
 import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
+import FormChangePassword from "../../../pages/FormChangePassword";
 
 interface ProfileFormProps {
   user: Partial<User>;
@@ -16,6 +17,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -51,11 +53,15 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
       }
 
       onSave(updatedUser);
-    } 
+    }
   };
 
   const handlePasswordIconClick = () => {
-    setIsPasswordEditing(true);
+    setOpen(true);
+  };
+
+  const handlePasswordModalClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -89,7 +95,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <ProfilePasswordField
-            value="********"
+            value="**"
             onChange={handleInputChange}
             onPasswordIconClick={handlePasswordIconClick}
             isPasswordEditing={isPasswordEditing}
@@ -185,6 +191,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
           </ColorButton>
         </Grid>
       </Grid>
+      <FormChangePassword open={open} onClose={handlePasswordModalClose} />
     </Box>
   );
 };
