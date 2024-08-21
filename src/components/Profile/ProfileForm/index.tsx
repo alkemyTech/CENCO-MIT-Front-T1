@@ -6,8 +6,6 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
 
 interface ProfileFormProps {
   user: Partial<User>;
@@ -20,11 +18,6 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { userID } = useParams<{ userID: string }>();
-  let isUserId = false;
-
-  if(userID){
-    isUserId = true;
-  }
 
   useEffect(() => {
     if (isEditing) {

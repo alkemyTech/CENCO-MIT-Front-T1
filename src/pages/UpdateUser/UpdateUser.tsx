@@ -62,7 +62,7 @@ const UpdateUser = () => {
             ) : (
                 <>
                     <Typography variant="h5" sx={{ mt: 3, fontWeight: 'bold' }}>
-                        Profile
+                        { `Modify User ${userById?.name}`}
                     </Typography>
                     <Paper
                         elevation={3}
