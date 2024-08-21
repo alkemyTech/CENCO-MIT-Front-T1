@@ -22,6 +22,10 @@ export const validateProfileForm = (formValues: Partial<User>) => {
   if (!isBirthdayValidAndAdult(formValues.birthday || "")) {
     errors.birthday = "Debe ser una fecha válida y tener al menos 18 años.";
   }
+  if (!formValues.role) {
+    errors.role = "Rol requerido.";
+  }
 
   return errors;
+
 };
