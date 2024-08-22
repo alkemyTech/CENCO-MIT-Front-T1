@@ -57,7 +57,6 @@ export default function DeleteButton({
           cursor: disabled ? "not-allowed" : "pointer",
         }}
         underline={disabled ? "none" : "hover"}
-        disabled={disabled}
       >
         Delete
       </Link>

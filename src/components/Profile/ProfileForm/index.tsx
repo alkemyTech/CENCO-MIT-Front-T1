@@ -15,7 +15,7 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
-  const [isPasswordEditing, setIsPasswordEditing] = useState(false);
+  const [isPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [open, setOpen] = useState(false);
 

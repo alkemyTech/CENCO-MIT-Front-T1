@@ -4,7 +4,7 @@ interface ActionButtonProps {
   userID: number;
 }
 
-export default function EditButton({ userID }: ActionButtonProps) {
+export default function EditButton({ }: ActionButtonProps) {
   return (
     <Link
       href="#"

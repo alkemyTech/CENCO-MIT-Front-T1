@@ -35,7 +35,7 @@ const Register = ({
     phone: "",
     country: "",
     birthday: new Date(),
-    role: "user" as Role,
+    role: "user" as "user" | "admin",
     password: "",
   });
 
@@ -81,7 +81,7 @@ const Register = ({
     else if (name === "confirmPassword")
       setErrors({ ...errors, confirmPassword: formData.password !== value });
     else if (name === "role") {
-      setFormData({ ...formData, role: value });
+      setFormData({ ...formData, role: value as Role });
     }
     else if (name === "email") {
       const { valid, available } = await isEmailValidAndAvailable(value);
@@ -268,14 +268,15 @@ const Register = ({
               <FormControl fullWidth margin="dense">
                 <InputLabel id="role-label">Role</InputLabel>
                 <Select
-                  eroor={errors.role}
+                 
                   type="role"
                   labelId="role-label"
                   id="role"
                   value={formData.role}
                   label="Role"
                   name="role"
-                  onChange={handleChange}
+              
+
                 >
                   <MenuItem value={"user"}>User</MenuItem>
                   <MenuItem value={"admin"}>Admin</MenuItem>

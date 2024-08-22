@@ -1,4 +1,4 @@
-import { Box, BoxProps, FormLabel, styled } from "@mui/material";
+import { Box, BoxProps, styled } from "@mui/material";
 
 const ColorBox = styled(Box)<BoxProps>(() => ({
     position: 'absolute',
