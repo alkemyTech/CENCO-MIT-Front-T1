@@ -17,10 +17,12 @@ const Profile = () => {
   const hasFetchedProfile = useRef(false);
 
   useEffect(() => {
+
     if (!user && !hasFetchedProfile.current) {
       setLoading(true);
       dispatch(fetchUserProfile()).finally(() => setLoading(false));
       hasFetchedProfile.current = true;
+
     }
   }, [dispatch, user]);
 

@@ -71,3 +71,17 @@ export const changePassword = async (currentPassword: string, newPassword: strin
     throw error;  // Re-throw the error to be handled by the caller
   }
 };
+
+export const fetchProfileById = async (id: number): Promise<User | null> => {
+  const response = await apiClient.get<{
+    message: string;
+    data: { users: User[] };
+  }>(`/user/search?id=${id}`);
+  return response.data.data.users.length > 0 ? response.data.data.users[0] : null;
+};
+
+
+export const updateProfileByAdmin = async (id: number, user: Partial<User>): Promise<User> => {
+  const response = await apiClient.patch<User>(`/user/update?id=${id}`, user);
+  return response.data;
+};

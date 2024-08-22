@@ -13,6 +13,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { Role } from "../interfaces/User";
 import Profile from "../pages/Profile/Profile";
 import UserManagementView from "../pages/UserManagementView/UserManagementView";
+import UpdateUser from "../pages/UpdateUser/UpdateUser";
 
 
 const router = createBrowserRouter(
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
         }
       >
         <Route path="all-users" element={<UserManagementView />} />
+        <Route path="update/:userID" element={<UpdateUser />} />
         <Route path="perfil" element={<Profile />} />
       </Route>
 

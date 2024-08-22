@@ -6,7 +6,10 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
 import FormChangePassword from "../../../pages/FormChangePassword";
-
+import Confirmation from "../../Confirmation";
+import { useDispatch } from "react-redux";
+import { showConfirmation } from "../../../redux/features/slices/confirmationSlice";
+import { useParams } from "react-router-dom";
 interface ProfileFormProps {
   user: Partial<User>;
   onSave: (updatedUser: Partial<User>) => void;
@@ -18,6 +21,8 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [open, setOpen] = useState(false);
+  const { userID } = useParams<{ userID: string }>();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isEditing) {
@@ -44,20 +49,24 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (Object.keys(errors).length === 0) {
-      const updatedUser = { ...formValues };
-
-      if (!isPasswordEditing) {
-        delete updatedUser.password;
-      }
-
-      onSave(updatedUser);
+      dispatch(showConfirmation());
     }
   };
 
+  const handleConfirm = () => {
+    const updatedUser = { ...formValues };
+    if (!isPasswordEditing) {
+      delete updatedUser.password;
+    }
+    onSave(updatedUser);
+  }
+
+
   const handlePasswordIconClick = () => {
-    setOpen(true);
+    if (!userID) {
+      setOpen(true);
+    }
   };
 
   const handlePasswordModalClose = () => {
@@ -88,9 +97,9 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="email"
             value={formValues.email || ""}
             onChange={handleInputChange}
-            disabled
+            disabled={userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
             autoComplete="email"
-            placeholder="ej: carla@example.com"  
+            placeholder="ej: carla@example.com"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -111,9 +120,9 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             onChange={handleInputChange}
             disabled
             autoComplete="off"
-            placeholder="Ej: 18.123.123-3"  
+            placeholder="Ej: 18.123.123-3"
           />
-        </Grid>
+        </Grid >
         <Grid item xs={12} sm={6}>
           <ProfileTextField
             id="birthday"
@@ -122,11 +131,11 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             type="date"
             value={formValues.birthday || ""}
             onChange={handleInputChange}
-            disabled={!isEditing}
+            disabled={userID ? true : !isEditing}
             autoComplete="bday"
             error={!!errors.birthday}
             helperText={errors.birthday}
-            placeholder="Ej: 08-10-1995"  
+            placeholder="Ej: 08-10-1995"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -140,7 +149,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="tel"
             error={!!errors.phone}
             helperText={errors.phone}
-            placeholder="Ej: +56912572545"  
+            placeholder="Ej: +56912572545"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -150,11 +159,11 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="country"
             value={formValues.country || ""}
             onChange={handleInputChange}
-            disabled={!isEditing}
+            disabled={userID ? true : !isEditing}
             autoComplete="country-name"
             error={!!errors.country}
             helperText={errors.country}
-            placeholder="Ej: Chile"  
+            placeholder="Ej: Chile"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -164,7 +173,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             name="role"
             value={formValues.role || ""}
             onChange={handleInputChange}
-            disabled
+            disabled={userID ? !isEditing : user.role === Role.ADMIN ? !isEditing : true}
             select
             autoComplete="off"
           >
@@ -189,10 +198,11 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
           >
             Guardar Cambios
           </ColorButton>
+          <Confirmation onConfirm={handleConfirm} />
         </Grid>
-      </Grid>
+      </Grid >
       <FormChangePassword open={open} onClose={handlePasswordModalClose} />
-    </Box>
+    </Box >
   );
 };
 
