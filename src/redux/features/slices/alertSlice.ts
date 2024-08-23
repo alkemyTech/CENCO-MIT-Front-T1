@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AlertColor } from "@mui/material";
 
-interface AlertState {
+export interface AlertState {
   severity: AlertColor;
   text: string;
 }
@@ -11,7 +11,7 @@ const initialState: AlertState = {
   text: "",
 };
 
-const alertSlice = createSlice({
+export const alertSlice = createSlice({
   name: "alert",
   initialState,
   reducers: {
