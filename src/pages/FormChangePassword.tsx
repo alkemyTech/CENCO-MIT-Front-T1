@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Typography, TextField, Grid } from '@mui/material';
 import { changePassword } from '../api/userServices';
 import { useDispatch } from 'react-redux';
-import { showAlert }  from '../redux/features/slices/alertSlice';
+import { showAlert, hideAlert } from '../redux/features/slices/alertSlice';
 import { isPasswordValid } from '../validations/changePassword';
 import ColorButton from '../components/ColorButton';
 
@@ -27,15 +27,18 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+    if (!open) {
+      setFormData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      setErrors({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
     }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [open]);
 
   const validateField = (name: string, value: string) => {
@@ -107,9 +110,16 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
           dispatch(showAlert({ severity: 'error', text: 'Error desconocido al cambiar la contraseña' }));
           break;
       }
+      setTimeout(() => {
+        dispatch(hideAlert());
+      }, 3000);
     } catch (error) {
       console.error('Error al cambiar la contraseña:', error);
       dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
+      
+      setTimeout(() => {
+        dispatch(hideAlert());
+      }, 3000);
     }
 
     onClose();
@@ -126,10 +136,10 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
       newPassword: '',
       confirmPassword: '',
     });
+    onClose(); 
   };
 
   const handleCancel = () => {
-    onClose();
     handleClose();
   };
 

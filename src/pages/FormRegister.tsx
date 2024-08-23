@@ -46,21 +46,21 @@ const Register = ({
     confirmPassword: false,
     email: "",
     birthday: false,
-    role: false, 
+    role: false,
   });
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden"; 
-      document.body.style.overflow = ""; 
+      document.body.style.overflow = "hidden";
+      document.body.style.overflow = "";
     }
 
     return () => {
-      document.body.style.overflow = ""; 
+      document.body.style.overflow = "";
     };
   }, [open]);
 
-  const handleChange = async (e: { target: { name: any; value: any; }; }) => {
+  const handleChange = async (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
@@ -81,8 +81,7 @@ const Register = ({
       setErrors({ ...errors, confirmPassword: formData.password !== value });
     else if (name === "role") {
       setFormData({ ...formData, role: value });
-    }
-    else if (name === "email") {
+    } else if (name === "email") {
       const { valid, available } = await isEmailValidAndAvailable(value);
       setErrors({
         ...errors,
@@ -151,7 +150,7 @@ const Register = ({
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <FormLabel htmlFor="name" sx={{ fontWeight: "bold" }}>
-                Nombre Completo
+                Full Name
               </FormLabel>
               <TextField
                 margin="dense"
@@ -168,7 +167,7 @@ const Register = ({
             </Grid>
             <Grid item xs={12}>
               <FormLabel htmlFor="email" sx={{ fontWeight: "bold" }}>
-                Correo Electrónico
+                Email
               </FormLabel>
               <TextField
                 error={!!errors.email}
@@ -204,7 +203,7 @@ const Register = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormLabel htmlFor="phone" sx={{ fontWeight: "bold" }}>
-                Teléfono
+                Phone
               </FormLabel>
               <TextField
                 error={errors.phone}
@@ -222,7 +221,7 @@ const Register = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormLabel htmlFor="country" sx={{ fontWeight: "bold" }}>
-                País
+                Country
               </FormLabel>
               <TextField
                 margin="dense"
@@ -238,7 +237,7 @@ const Register = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormLabel htmlFor="birthday" sx={{ fontWeight: "bold" }}>
-                Fecha de Nacimiento
+                Birthday
               </FormLabel>
               <TextField
                 error={errors.birthday}
@@ -283,7 +282,7 @@ const Register = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormLabel htmlFor="password" sx={{ fontWeight: "bold" }}>
-                Contraseña
+                Password
               </FormLabel>
               <TextField
                 error={errors.password}
