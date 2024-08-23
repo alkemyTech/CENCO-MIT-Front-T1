@@ -46,22 +46,21 @@ const Register = ({
     confirmPassword: false,
     email: "",
     birthday: false,
-    role: false, // Add the 'role' property
+    role: false, 
   });
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden"; // Prevent scrolling on body when modal is open
-    } else {
-      document.body.style.overflow = ""; // Re-enable scrolling on body when modal is closed
+      document.body.style.overflow = "hidden"; 
+      document.body.style.overflow = ""; 
     }
 
     return () => {
-      document.body.style.overflow = ""; // Clean up in case the component is unmounted
+      document.body.style.overflow = ""; 
     };
   }, [open]);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
@@ -268,7 +267,7 @@ const Register = ({
               <FormControl fullWidth margin="dense">
                 <InputLabel id="role-label">Role</InputLabel>
                 <Select
-                  eroor={errors.role}
+                  error={errors.role}
                   type="role"
                   labelId="role-label"
                   id="role"

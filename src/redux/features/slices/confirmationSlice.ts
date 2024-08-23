@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface ConfirmationStatus {
+export interface ConfirmationStatus {
     open: boolean;
     status: boolean;
 }
@@ -10,7 +10,7 @@ const initialState: ConfirmationStatus = {
     status: false
 };
 
-const confirmationSlice = createSlice({
+export const confirmationSlice = createSlice({
     name: "confirmation",
     initialState,
     reducers: {
