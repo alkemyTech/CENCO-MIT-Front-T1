@@ -67,23 +67,23 @@ export default function DeleteButton({
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Are you sure you want to delete this user?"}
+          {"¿Estas seguro de eliminar este usuario?"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Once a user is deleted, they become inactive and can no longer log
-            in to their account.
+          Una vez que se elimina un usuario, éste pasa a estar inactivo y ya no puede conectarse a su cuenta.
+          acceder a su cuenta.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Cancelar</Button>
           <Button
             onClick={handleConfirm}
             variant="contained"
             color="error"
             autoFocus
           >
-            Confirm
+            Confirmar
           </Button>
         </DialogActions>
       </Dialog>

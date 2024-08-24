@@ -29,12 +29,12 @@ const DashboardAdmin = () => {
         dispatch(
           showAlert({
             severity: "success",
-            text: "User deleted successfully!",
+            text: "Usuario eliminado correctamente!",
           })
         );
       } else if (deleteStatus === "error") {
         dispatch(
-          showAlert({ severity: "error", text: "Failed to delete user." })
+          showAlert({ severity: "error", text: "Error al eliminar usuario." })
         );
       }
     }
@@ -44,12 +44,12 @@ const DashboardAdmin = () => {
         dispatch(
           showAlert({
             severity: "success",
-            text: "User created successfully!",
+            text: "Usuario creado con éxito!",
           })
         );
       } else if (createStatus === "error") {
         dispatch(
-          showAlert({ severity: "error", text: "Failed to create user." })
+          showAlert({ severity: "error", text: "Error al crear usuario" })
         );
       }
     }

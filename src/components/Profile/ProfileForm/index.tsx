@@ -87,7 +87,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="name"
             error={!!errors.name}
             helperText={errors.name}
-            placeholder="Enter your full name"  // Placeholder
+            placeholder="ej: Carla Figueroa" 
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -104,7 +104,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <ProfilePasswordField
-            value="**"
+            value="******"
             onChange={handleInputChange}
             onPasswordIconClick={handlePasswordIconClick}
             isPasswordEditing={isPasswordEditing}

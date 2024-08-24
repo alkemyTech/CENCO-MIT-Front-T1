@@ -37,7 +37,7 @@ const Header = ({ onDrawerToggle }: { onDrawerToggle: () => void }) => {
       >
         <Grid item xs={9} sm={8} md={11}>
           <Typography variant="h6" component="h2">
-            Hello, {user.name}
+            Hola, {user.name}
           </Typography>
         </Grid>
         <Grid

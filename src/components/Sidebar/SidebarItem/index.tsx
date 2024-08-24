@@ -13,24 +13,31 @@ const SidebarItem = ({ label, icon, active, onClick }: SidebarItemProps) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const handleClick = () => {
-    onClick(); 
+    onClick();
 
     if (label === 'Dashboard') {
       navigate('/dashboard/all-users');
     } else if (label === 'Logout') {
-      dispatch(logout()); 
-      navigate('/'); 
-    }else if(label === 'Profile'){
-      if(user?.role === Role.ADMIN){
-        navigate('perfil'); 
-      }
+      dispatch(logout());
+      navigate('/');
+    } else if (label === 'Profile') {
+      navigate('perfil');
     }
+  };
+
+  const getIconColor = () => {
+    if (label === 'Profile' && user?.role === Role.USER) {
+      return 'var(--tertiary-color)';
+    } else if (active) {
+      return 'var(--tertiary-color)';
+    }
+    return 'inherit';
   };
 
   return (
     <ListItemButton onClick={handleClick} selected={active}>
       <ListItemIcon>
-        {cloneElement(icon, { style: { color: active ? 'var(--tertiary-color)' : 'inherit' } })}
+        {cloneElement(icon, { style: { color: getIconColor() } })}
       </ListItemIcon>
       <ListItemText primary={label} />
     </ListItemButton>
