@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { showAlert, hideAlert } from '../redux/features/slices/alertSlice';
 import { isPasswordValid } from '../validations/changePassword';
 import ColorButton from '../components/ColorButton';
+import ConfirmationDialog from '../components/Confirmation';
+import { showConfirmation } from '../redux/features/slices/confirmationSlice';
 
 interface FormChangePasswordProps {
   open: boolean;
@@ -77,9 +79,7 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
     setErrors({ ...errors, [name]: error });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     const currentPasswordError = validateField('currentPassword', formData.currentPassword);
     const newPasswordError = validateField('newPassword', formData.newPassword);
     const confirmPasswordError = validateField('confirmPassword', formData.confirmPassword);
@@ -125,95 +125,104 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose }
     onClose();
   };
 
-  const handleClose = () => {
-    setFormData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-    setErrors({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-    onClose(); 
+  const handleOpenConfirmation = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const currentPasswordError = validateField('currentPassword', formData.currentPassword);
+    const newPasswordError = validateField('newPassword', formData.newPassword);
+    const confirmPasswordError = validateField('confirmPassword', formData.confirmPassword);
+
+    if (currentPasswordError || newPasswordError || confirmPasswordError) {
+      setErrors({
+        currentPassword: currentPasswordError,
+        newPassword: newPasswordError,
+        confirmPassword: confirmPasswordError,
+      });
+      return;
+    }
+
+    dispatch(showConfirmation());
   };
 
   const handleCancel = () => {
-    handleClose();
+    onClose();
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="change-password-modal-title"
-      aria-describedby="change-password-modal-description"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div style={{ backgroundColor: 'white', padding: '40px', maxWidth: '600px', width: '100%', borderRadius: '10px' }}>
-        <Typography id="change-password-modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
-          Cambiar Contraseña
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                error={!!errors.currentPassword}
-                helperText={errors.currentPassword}
-                margin="dense"
-                required
-                fullWidth
-                name="currentPassword"
-                label="Contraseña Actual"
-                type="password"
-                value={formData.currentPassword}
-                onChange={handleChange}
-              />
+    <>
+      <Modal
+        open={open}
+        onClose={handleCancel}
+        aria-labelledby="change-password-modal-title"
+        aria-describedby="change-password-modal-description"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ backgroundColor: 'white', padding: '40px', maxWidth: '600px', width: '100%', borderRadius: '10px' }}>
+          <Typography id="change-password-modal-title" variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
+            Cambiar Contraseña
+          </Typography>
+          <form onSubmit={handleOpenConfirmation}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  error={!!errors.currentPassword}
+                  helperText={errors.currentPassword}
+                  margin="dense"
+                  required
+                  fullWidth
+                  name="currentPassword"
+                  label="Contraseña Actual"
+                  type="password"
+                  value={formData.currentPassword}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={!!errors.newPassword}
+                  helperText={errors.newPassword}
+                  margin="dense"
+                  required
+                  fullWidth
+                  name="newPassword"
+                  label="Nueva Contraseña"
+                  type="password"
+                  value={formData.newPassword}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword}
+                  margin="dense"
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirmar Nueva Contraseña"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                error={!!errors.newPassword}
-                helperText={errors.newPassword}
-                margin="dense"
-                required
-                fullWidth
-                name="newPassword"
-                label="Nueva Contraseña"
-                type="password"
-                value={formData.newPassword}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-                margin="dense"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirmar Nueva Contraseña"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
 
-          <ColorButton type="submit" fullWidth variant="contained" sx={{ mt: 3 }} disabled={!isPasswordValid(formData.confirmPassword)}>
-            Guardar
-          </ColorButton>
-          <ColorButton onClick={handleCancel} fullWidth variant="contained" sx={{ mt: 3 }}>
-            Cancelar
-          </ColorButton>
-        </form>
-      </div>
-    </Modal>
+            <ColorButton type="submit" fullWidth variant="contained" sx={{ mt: 3 }} disabled={!isPasswordValid(formData.confirmPassword)}>
+              Guardar
+            </ColorButton>
+            <ColorButton onClick={handleCancel} fullWidth variant="contained" sx={{ mt: 3 }}>
+              Cancelar
+            </ColorButton>
+          </form>
+        </div>
+      </Modal>
+
+      <ConfirmationDialog onConfirm={handleSubmit} />
+    </>
   );
 };
 
