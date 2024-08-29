@@ -6,7 +6,7 @@ import ColorButton from '../components/ColorButton';
 interface FormChangePasswordProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (currentPassword: string, newPassword: string) => void; // Nueva prop para manejar el submit
+  onSubmit: (currentPassword: string, newPassword: string) => void; 
 }
 
 const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose, onSubmit }) => {
@@ -88,7 +88,7 @@ const FormChangePassword: React.FC<FormChangePasswordProps> = ({ open, onClose, 
       return;
     }
 
-    onSubmit(formData.currentPassword, formData.newPassword); // Llama a la función onSubmit para manejar el cambio de contraseña
+    onSubmit(formData.currentPassword, formData.newPassword); 
   };
 
   return (
