@@ -21,10 +21,11 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
-  const [isPasswordEditing] = useState(false);
+  const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
   const [, setConfirmationOpen] = useState(false);
+  const [pendingPasswordChange, setPendingPasswordChange] = useState<{ currentPassword: string; newPassword: string } | null>(null);
   const { userID } = useParams<{ userID: string }>();
   const dispatch = useDispatch();
 
@@ -59,43 +60,53 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
     }
   };
 
-  const handleConfirm = async (currentPassword?: string, newPassword?: string) => {
-    if (currentPassword && newPassword) {
+  const handlePasswordChange = async (currentPassword: string, newPassword: string) => {
+    setPendingPasswordChange({ currentPassword, newPassword });
+    setConfirmationOpen(true);
+    dispatch(showConfirmation());
+  };
+
+  const handleConfirm = async () => {
+    if (pendingPasswordChange) {
+      const { currentPassword, newPassword } = pendingPasswordChange;
+      setPendingPasswordChange(null);
       try {
         const response = await changePassword(currentPassword, newPassword);
         if (response.statusCode === 200) {
           dispatch(showAlert({ severity: 'success', text: 'Contraseña cambiada con éxito' }));
         } else if (response.statusCode === 401) {
           dispatch(showAlert({ severity: 'error', text: 'La contraseña actual no coincide.' }));
-          return;
         } else {
           dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
-          return;
         }
       } catch (error) {
         dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
-        return;
+      }
+      setOpenPasswordModal(false);
+      setIsPasswordEditing(false);  // Restablecer el estado después de cambiar la contraseña
+    } else {
+      const updatedUser = { ...formValues };
+      if (!isPasswordEditing) {
+        onSave(updatedUser);
+        dispatch(showAlert({ severity: 'success', text: 'Perfil actualizado con éxito' }));
       }
     }
-
-    const updatedUser = { ...formValues };
-    if (!isPasswordEditing) {
-      delete updatedUser.password;
-    }
-    onSave(updatedUser);
-
-    dispatch(hideAlert());
     setConfirmationOpen(false);
+
+    // Ocultar la alerta después de 3 segundos
+    setTimeout(() => {
+      dispatch(hideAlert());
+    }, 3000);
   };
 
   const handlePasswordIconClick = () => {
-    if (!userID) {
-      setOpenPasswordModal(true);
-    }
+    setIsPasswordEditing(true);
+    setOpenPasswordModal(true);
   };
 
   const handlePasswordModalClose = () => {
     setOpenPasswordModal(false);
+    setIsPasswordEditing(false);
   };
 
   return (
@@ -228,10 +239,10 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
       <FormChangePassword 
         open={openPasswordModal} 
         onClose={handlePasswordModalClose} 
-        onSubmit={(currentPassword, newPassword) => handleConfirm(currentPassword, newPassword)} 
+        onSubmit={(currentPassword, newPassword) => handlePasswordChange(currentPassword, newPassword)} 
       />
       <ConfirmationDialog
-        onConfirm={() => handleConfirm()}
+        onConfirm={handleConfirm}
         onClose={() => setConfirmationOpen(false)} 
       />
     </Box>
