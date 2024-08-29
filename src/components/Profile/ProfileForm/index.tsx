@@ -6,10 +6,13 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
 import FormChangePassword from "../../../pages/FormChangePassword";
-import Confirmation from "../../Confirmation";
 import { useDispatch } from "react-redux";
 import { showConfirmation } from "../../../redux/features/slices/confirmationSlice";
 import { useParams } from "react-router-dom";
+import ConfirmationDialog from "../../Confirmation";
+import { changePassword } from '../../../api/userServices';
+import { showAlert, hideAlert } from '../../../redux/features/slices/alertSlice';
+
 interface ProfileFormProps {
   user: Partial<User>;
   onSave: (updatedUser: Partial<User>) => void;
@@ -20,7 +23,8 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
   const [isPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [open, setOpen] = useState(false);
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [, setConfirmationOpen] = useState(false);
   const { userID } = useParams<{ userID: string }>();
   const dispatch = useDispatch();
 
@@ -50,27 +54,48 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (Object.keys(errors).length === 0) {
+      setConfirmationOpen(true);
       dispatch(showConfirmation());
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async (currentPassword?: string, newPassword?: string) => {
+    if (currentPassword && newPassword) {
+      try {
+        const response = await changePassword(currentPassword, newPassword);
+        if (response.statusCode === 200) {
+          dispatch(showAlert({ severity: 'success', text: 'Contraseña cambiada con éxito' }));
+        } else if (response.statusCode === 401) {
+          dispatch(showAlert({ severity: 'error', text: 'La contraseña actual no coincide.' }));
+          return;
+        } else {
+          dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
+          return;
+        }
+      } catch (error) {
+        dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
+        return;
+      }
+    }
+
     const updatedUser = { ...formValues };
     if (!isPasswordEditing) {
       delete updatedUser.password;
     }
     onSave(updatedUser);
-  }
 
+    dispatch(hideAlert());
+    setConfirmationOpen(false);
+  };
 
   const handlePasswordIconClick = () => {
     if (!userID) {
-      setOpen(true);
+      setOpenPasswordModal(true);
     }
   };
 
   const handlePasswordModalClose = () => {
-    setOpen(false);
+    setOpenPasswordModal(false);
   };
 
   return (
@@ -87,7 +112,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="name"
             error={!!errors.name}
             helperText={errors.name}
-            placeholder="ej: Carla Figueroa" 
+            placeholder="ej: Carla Figueroa"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -122,7 +147,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="off"
             placeholder="Ej: 18.123.123-3"
           />
-        </Grid >
+        </Grid>
         <Grid item xs={12} sm={6}>
           <ProfileTextField
             id="birthday"
@@ -198,11 +223,18 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
           >
             Guardar Cambios
           </ColorButton>
-          <Confirmation onConfirm={handleConfirm} />
         </Grid>
-      </Grid >
-      <FormChangePassword open={open} onClose={handlePasswordModalClose} />
-    </Box >
+      </Grid>
+      <FormChangePassword 
+        open={openPasswordModal} 
+        onClose={handlePasswordModalClose} 
+        onSubmit={(currentPassword, newPassword) => handleConfirm(currentPassword, newPassword)} 
+      />
+      <ConfirmationDialog
+        onConfirm={() => handleConfirm()}
+        onClose={() => setConfirmationOpen(false)} 
+      />
+    </Box>
   );
 };
 

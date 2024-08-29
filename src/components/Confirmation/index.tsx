@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Button,
   Dialog,
@@ -15,6 +16,7 @@ import {
 
 interface ConfirmationDialogProps {
   onConfirm: () => void;
+  onClose: () => void
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -30,7 +32,6 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       onConfirm();
     } else {
       dispatch(setConfirmationStatus(false));
-      window.location.reload();
     }
   };
 
@@ -50,7 +51,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleClosePopup(false)}>Cancel</Button>
+        <Button onClick={() => handleClosePopup(false)}>Cancelar</Button>
         <Button onClick={() => handleClosePopup(true)}>Confirmar</Button>
       </DialogActions>
     </Dialog>
