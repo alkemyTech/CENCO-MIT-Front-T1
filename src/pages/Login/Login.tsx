@@ -109,7 +109,7 @@ function Login() {
               {
                 showAlert && <CustomAlert
                   severity={severity}
-                  text={severity === "success" ? "Inicio de sesión correcto" : "Credenciales no válidas, inténtelo de nuevo"}
+                  text={severity === "success" ? "Iniciaste sesión correctamente" : "Credenciales no válidas, inténtelo de nuevo"}
                 />
               }
             </div>

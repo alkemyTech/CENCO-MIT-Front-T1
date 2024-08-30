@@ -6,10 +6,13 @@ import ProfileTextField from "../ProfileTextField";
 import ProfilePasswordField from "../ProfilePasswordField";
 import { validateProfileForm } from "../../../utils/validateProfileForm";
 import FormChangePassword from "../../../pages/FormChangePassword";
-import Confirmation from "../../Confirmation";
 import { useDispatch } from "react-redux";
 import { showConfirmation } from "../../../redux/features/slices/confirmationSlice";
 import { useParams } from "react-router-dom";
+import ConfirmationDialog from "../../Confirmation";
+import { changePassword } from '../../../api/userServices';
+import { showAlert, hideAlert } from '../../../redux/features/slices/alertSlice';
+
 interface ProfileFormProps {
   user: Partial<User>;
   onSave: (updatedUser: Partial<User>) => void;
@@ -18,9 +21,11 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const [formValues, setFormValues] = useState<Partial<User>>({ ...user });
-  const [isPasswordEditing] = useState(false);
+  const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [open, setOpen] = useState(false);
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [, setConfirmationOpen] = useState(false);
+  const [pendingPasswordChange, setPendingPasswordChange] = useState<{ currentPassword: string; newPassword: string } | null>(null);
   const { userID } = useParams<{ userID: string }>();
   const dispatch = useDispatch();
 
@@ -50,27 +55,58 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (Object.keys(errors).length === 0) {
+      setConfirmationOpen(true);
       dispatch(showConfirmation());
     }
   };
 
-  const handleConfirm = () => {
-    const updatedUser = { ...formValues };
-    if (!isPasswordEditing) {
-      delete updatedUser.password;
-    }
-    onSave(updatedUser);
-  }
+  const handlePasswordChange = async (currentPassword: string, newPassword: string) => {
+    setPendingPasswordChange({ currentPassword, newPassword });
+    setConfirmationOpen(true);
+    dispatch(showConfirmation());
+  };
 
+  const handleConfirm = async () => {
+    if (pendingPasswordChange) {
+      const { currentPassword, newPassword } = pendingPasswordChange;
+      setPendingPasswordChange(null);
+      try {
+        const response = await changePassword(currentPassword, newPassword);
+        if (response.statusCode === 200) {
+          dispatch(showAlert({ severity: 'success', text: 'Contraseña cambiada con éxito' }));
+        } else if (response.statusCode === 401) {
+          dispatch(showAlert({ severity: 'error', text: 'La contraseña actual no coincide.' }));
+        } else {
+          dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
+        }
+      } catch (error) {
+        dispatch(showAlert({ severity: 'error', text: 'Error al cambiar la contraseña' }));
+      }
+      setOpenPasswordModal(false);
+      setIsPasswordEditing(false);  // Restablecer el estado después de cambiar la contraseña
+    } else {
+      const updatedUser = { ...formValues };
+      if (!isPasswordEditing) {
+        onSave(updatedUser);
+        dispatch(showAlert({ severity: 'success', text: 'Perfil actualizado con éxito' }));
+      }
+    }
+    setConfirmationOpen(false);
+
+    // Ocultar la alerta después de 3 segundos
+    setTimeout(() => {
+      dispatch(hideAlert());
+    }, 3000);
+  };
 
   const handlePasswordIconClick = () => {
-    if (!userID) {
-      setOpen(true);
-    }
+    setIsPasswordEditing(true);
+    setOpenPasswordModal(true);
   };
 
   const handlePasswordModalClose = () => {
-    setOpen(false);
+    setOpenPasswordModal(false);
+    setIsPasswordEditing(false);
   };
 
   return (
@@ -87,7 +123,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="name"
             error={!!errors.name}
             helperText={errors.name}
-            placeholder="ej: Carla Figueroa" 
+            placeholder="ej: Carla Figueroa"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -122,7 +158,7 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
             autoComplete="off"
             placeholder="Ej: 18.123.123-3"
           />
-        </Grid >
+        </Grid>
         <Grid item xs={12} sm={6}>
           <ProfileTextField
             id="birthday"
@@ -198,11 +234,18 @@ const ProfileForm = ({ user, onSave, isEditing }: ProfileFormProps) => {
           >
             Guardar Cambios
           </ColorButton>
-          <Confirmation onConfirm={handleConfirm} />
         </Grid>
-      </Grid >
-      <FormChangePassword open={open} onClose={handlePasswordModalClose} />
-    </Box >
+      </Grid>
+      <FormChangePassword 
+        open={openPasswordModal} 
+        onClose={handlePasswordModalClose} 
+        onSubmit={(currentPassword, newPassword) => handlePasswordChange(currentPassword, newPassword)} 
+      />
+      <ConfirmationDialog
+        onConfirm={handleConfirm}
+        onClose={() => setConfirmationOpen(false)} 
+      />
+    </Box>
   );
 };
 
